@@ -1,6 +1,6 @@
 # Home Assistant Setlist.fm Integration
 
-This is a custom integration for [Home Assistant](https://www.home-assistant.io/) that allows you to display concerts from Setlist.fm for specific users.
+This is a custom integration for [Home Assistant](https://www.home-assistant.io/) that allows you to display concerts from setlist.fm for specific users.
 
 ## Installation
 Copy the setlistfm directory to your Home Assistant custom_components directory:
@@ -38,14 +38,23 @@ setlistfm:
 | Parameter       | Description |
 |----------------|-------------|
 | `userid`       | The Setlist.fm user ID. |
-| `name`         | A friendly name for the user. |
-| `api_key`      | Your Setlist.fm API key. |
-| `refresh_period` | The period (in hours) to refresh the data. |
-| `number_of_concerts` | The number of concerts to display (1-20). |
+| `name`         | A friendly name for the user. Used to allow retrieval of multiple users' setlist.fm data |
+| `api_key`      | The user's setlist.fm API key. |
+| `refresh_period` | The period (in hours) to refresh the data. Defaults to 6. |
+| `number_of_concerts` | The number of concerts to display (1-20). Defaults to 10. |
 | `date_format`  | The format for displaying dates (`%d-%m-%Y`, `%d-%m-%y`, `%m-%d-%Y`, `%m-%d-%y`). |
 | `show_concerts` | Which concerts to show: `upcoming` for upcoming concerts, `past` for past concerts, `all` for both. |
 
 Restart Home Assistant to apply the changes.
+
+The integration creates these entities
+
+| Entity | Description | 
+|--------|-------------|
+| sensor.setlistfm_(name)_last_update | The date and time of the last update of this user's setlist.fm data |
+| sensor.setlistfm_(name)_response | The HTTP response from the last update, if not a 200 then this also contains the error message from the API |
+| text.setlistfm_(name)_concerts | A text entity containg the list of concerts for the user | 
+
 
 ## Displaying Concerts in Lovelace
 To display the concerts in a Lovelace card, you can use either the **Entities Card** or the **Markdown Card**.
@@ -98,6 +107,10 @@ content: >
 
 ## Force Refresh
 You can manually force a refresh of the data by calling the `setlistfm.force_refresh` service in Home Assistant.
+
+## Version
+
+1.0 - 06/02/2025
 
 ## License
 This project is licensed under the Apache 2.0 License. See the LICENSE file for details.
