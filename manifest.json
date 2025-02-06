@@ -1,0 +1,9 @@
+{
+  "domain": "setlistfm",
+  "name": "Setlist.fm",
+  "documentation": "https://github.com/ianpleasance/home-assistant-setlistfm/README.md",
+  "dependencies": [],
+  "codeowners": ["@ianpleasance"],
+  "requirements": [],
+  "version": "1.0.0"
+}
