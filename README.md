@@ -1,6 +1,10 @@
 # Home Assistant setlist.fm Integration
 
-This is a custom integration for [Home Assistant](https://www.home-assistant.io/) that allows you to display concerts from setlist.fm for specific users.
+This is a custom integration for [Home Assistant](https://www.home-assistant.io/) that allows you to display concerts from [setlist.fm](https://setlist.fm/) for specific users.
+
+## API access
+
+For each user that you want to use this integration for, you will need a setlist.fm API key. When logged into setlist.fm as that user, select the menu dropdown and the "API" option and then request an API key.
 
 ## Installation
 Copy the setlistfm directory to your Home Assistant custom_components directory:
@@ -38,7 +42,7 @@ setlistfm:
 | Parameter       | Description |
 |----------------|-------------|
 | `userid`       | The setlist.fm user ID. |
-| `name`         | A friendly name for the user. Used to allow retrieval of multiple users' setlist.fm data |
+| `name`         | A friendly name for the user. Used to allow retrieval of and differentiation of multiple users' setlist.fm data |
 | `api_key`      | The user's setlist.fm API key. |
 | `refresh_period` | The period (in hours) to refresh the data. Defaults to 6. |
 | `number_of_concerts` | The number of concerts to display (1-20). Defaults to 10. |
