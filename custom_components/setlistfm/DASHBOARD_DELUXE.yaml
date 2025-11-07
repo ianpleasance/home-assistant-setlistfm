@@ -1,0 +1,219 @@
+# Deluxe Setlist.fm Dashboard - Full Featured
+# Copy ONLY the YAML below (starting with "views:")
+# Replace "ianpleasance" with your Setlist.fm username
+
+views:
+  - title: Concert Tracker
+    path: concerts-deluxe
+    icon: mdi:guitar-electric
+    badges: []
+    cards:
+      # Hero Header
+      - type: markdown
+        content: |
+          # &#127928; My Concert Journey
+          ### Your complete setlist.fm history
+
+      # Big Stats Row
+      - type: horizontal-stack
+        cards:
+          - type: markdown
+            content: |
+              # {{ states('sensor.setlistfm_ianpleasance_concerts') }}
+              **Shown**
+          
+          - type: markdown
+            content: |
+              {% set concerts = state_attr('sensor.setlistfm_ianpleasance_concerts', 'concerts') %}
+              {% set ns = namespace(upcoming=0) %}
+              {% if concerts %}
+                {% for concert in concerts %}
+                  {% set date_parts = concert.date.split('-') %}
+                  {% set concert_date = date_parts[2] ~ '-' ~ date_parts[1] ~ '-' ~ date_parts[0] %}
+                  {% set today = now().strftime('%Y-%m-%d') %}
+                  {% if concert_date >= today %}
+                    {% set ns.upcoming = ns.upcoming + 1 %}
+                  {% endif %}
+                {% endfor %}
+              {% endif %}
+              # {{ ns.upcoming }}
+              **Upcoming**
+
+      # Featured: Next Concert
+      - type: markdown
+        content: |
+          ## &#11088; Featured: Your Next Show
+          
+          {% set concerts = state_attr('sensor.setlistfm_ianpleasance_concerts', 'concerts') %}
+          {% if concerts %}
+            {% set ns = namespace(found=false) %}
+            {% for concert in concerts if not ns.found %}
+              {% set date_parts = concert.date.split('-') %}
+              {% set concert_date = date_parts[2] ~ '-' ~ date_parts[1] ~ '-' ~ date_parts[0] %}
+              {% set today = now().strftime('%Y-%m-%d') %}
+              {% if concert_date >= today %}
+                {% set ns.found = true %}
+          
+          # &#127908; {{ concert.artist.name }}
+          
+          ### &#128205; Venue
+          **{{ concert.venue.name }}**
+          {{ concert.venue.city }}, {{ concert.venue.state }}
+          {{ concert.venue.country }}
+          
+          ### &#128197; Date
+          **{{ concert.date }}**
+          
+          {% if concert.song_count > 0 %}
+          ### &#127925; Expected Songs
+          Based on recent shows: **~{{ concert.song_count }}** songs
+          {% endif %}
+          
+          [&#128279; View on Setlist.fm]({{ concert.url }})
+          
+          ---
+              {% endif %}
+            {% endfor %}
+            {% if not ns.found %}
+          
+          ## &#128532; No upcoming concerts scheduled
+          
+          ### &#128269; Find Your Next Show
+          Browse concerts and add them to your attended list on Setlist.fm
+          
+          [&#127915; Browse Concerts](https://www.setlist.fm)
+          
+          ---
+            {% endif %}
+          {% else %}
+          &#8987; Loading...
+          {% endif %}
+
+      # All Upcoming Concerts
+      - type: markdown
+        content: |
+          ## &#128281; All Upcoming Concerts
+          
+          {% set concerts = state_attr('sensor.setlistfm_ianpleasance_concerts', 'concerts') %}
+          {% if concerts %}
+            {% set ns = namespace(count=0, has_upcoming=false) %}
+            {% for concert in concerts %}
+              {% set date_parts = concert.date.split('-') %}
+              {% set concert_date = date_parts[2] ~ '-' ~ date_parts[1] ~ '-' ~ date_parts[0] %}
+              {% set today = now().strftime('%Y-%m-%d') %}
+              {% if concert_date >= today %}
+                {% set ns.has_upcoming = true %}
+                {% set ns.count = ns.count + 1 %}
+          
+          ### {{ ns.count }}. {{ concert.artist.name }}
+          &#128205; {{ concert.venue.name }}, {{ concert.venue.city }}
+          &#128197; {{ concert.date }}
+              {% endif %}
+            {% endfor %}
+            {% if ns.has_upcoming %}
+              
+          ---
+          **Total:** {{ ns.count }} upcoming concert{{ 's' if ns.count != 1 else '' }}
+            {% else %}
+          
+          No upcoming concerts. [Find shows near you](https://www.setlist.fm)
+            {% endif %}
+          {% else %}
+          &#8987; Loading...
+          {% endif %}
+
+      # Recent Concerts with Full Details
+      - type: markdown
+        content: |
+          ## &#10024; Recently Attended (Last 10)
+          
+          {% set concerts = state_attr('sensor.setlistfm_ianpleasance_concerts', 'concerts') %}
+          {% if concerts %}
+            {% set ns = namespace(count=0) %}
+            {% for concert in concerts %}
+              {% if ns.count < 10 %}
+                {% set date_parts = concert.date.split('-') %}
+                {% set concert_date = date_parts[2] ~ '-' ~ date_parts[1] ~ '-' ~ date_parts[0] %}
+                {% set today = now().strftime('%Y-%m-%d') %}
+                {% if concert_date < today %}
+                  {% set ns.count = ns.count + 1 %}
+          
+          ---
+          
+          ### {{ ns.count }}. &#127928; {{ concert.artist.name }}
+          
+          **&#128205; Venue:** {{ concert.venue.name }}
+          **&#127750; Location:** {{ concert.venue.city }}, {{ concert.venue.country }}
+          **&#128197; Date:** {{ concert.date }}
+          {% if concert.song_count > 0 %}**&#127925; Songs Performed:** {{ concert.song_count }}{% endif %}
+          
+          [&#128279; View Full Setlist]({{ concert.url }})
+                {% endif %}
+              {% endif %}
+            {% endfor %}
+          {% else %}
+          &#8987; Loading...
+          {% endif %}
+
+      # Statistics Card
+      - type: markdown
+        content: |
+          ## &#128202; Your Concert Statistics
+          
+          {% set concerts = state_attr('sensor.setlistfm_ianpleasance_concerts', 'concerts') %}
+          {% if concerts %}
+            {% set ns = namespace(upcoming=0, past=0) %}
+            {% for concert in concerts %}
+              {% set date_parts = concert.date.split('-') %}
+              {% set concert_date = date_parts[2] ~ '-' ~ date_parts[1] ~ '-' ~ date_parts[0] %}
+              {% set today = now().strftime('%Y-%m-%d') %}
+              {% if concert_date >= today %}
+                {% set ns.upcoming = ns.upcoming + 1 %}
+              {% else %}
+                {% set ns.past = ns.past + 1 %}
+              {% endif %}
+            {% endfor %}
+            {% set total_songs = concerts | map(attribute='song_count') | sum %}
+            {% set venues = concerts | map(attribute='venue.name') | unique | list %}
+            {% set cities = concerts | map(attribute='venue.city') | unique | list %}
+          
+          &#127925; **Currently Shown:** {{ concerts | length }}
+          
+          &#128281; **Upcoming:** {{ ns.upcoming }}
+          
+          &#9989; **Past (shown):** {{ ns.past }}
+          
+          &#127926; **Total Songs (shown concerts):** {{ total_songs }}
+          
+          &#127963; **Unique Venues:** {{ venues | length }}
+          
+          &#127758; **Cities Visited:** {{ cities | length }}
+          {% else %}
+          &#8987; Loading statistics...
+          {% endif %}
+
+      # System Status
+      - type: entities
+        title: System Status
+        show_header_toggle: false
+        entities:
+          - entity: sensor.setlistfm_ianpleasance_concerts
+            name: Concerts Loaded
+            icon: mdi:database
+          
+          - entity: sensor.setlistfm_ianpleasance_last_update
+            name: Last Refresh
+            icon: mdi:refresh
+
+      # Footer
+      - type: markdown
+        content: |
+          ---
+          
+          <center>
+          
+          ### &#127928; Powered by Setlist.fm
+          
+          [Visit Setlist.fm](https://www.setlist.fm) | [Add Concert](https://www.setlist.fm) | [My Profile](https://www.setlist.fm/user/ianpleasance)
+          
+          </center>

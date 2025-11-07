@@ -1,0 +1,3 @@
+# Service definitions for Setlist.fm integration
+# Note: Services are dynamically registered per config entry
+# The actual service name will be: setlistfm.force_refresh_{entry_id}

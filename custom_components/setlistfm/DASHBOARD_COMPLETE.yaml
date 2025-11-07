@@ -1,0 +1,118 @@
+# Complete Setlist.fm Dashboard - Raw Configuration Editor
+# Copy ONLY the YAML below (starting with "views:")
+# Replace "ianpleasance" with your Setlist.fm username throughout
+
+views:
+  - title: My Concerts
+    path: concerts
+    icon: mdi:music
+    badges: []
+    cards:
+      # Header Card
+      - type: markdown
+        content: |
+          # &#127928; My Concert Tracker
+          Track all your attended and upcoming concerts from Setlist.fm
+
+      # Stats Row
+      - type: horizontal-stack
+        cards:
+          - type: markdown
+            content: |
+              ## &#127925; {{ states('sensor.setlistfm_ianpleasance_concerts') }}
+              **Concerts Shown**
+          
+          - type: markdown
+            content: |
+              ## &#9200; {{ relative_time(states('sensor.setlistfm_ianpleasance_last_update')) }}
+              **Last Updated**
+
+      # Upcoming Concerts Section
+      - type: markdown
+        content: |
+          ## &#127908; Upcoming Concerts
+          
+          {% set concerts = state_attr('sensor.setlistfm_ianpleasance_concerts', 'concerts') %}
+          {% if concerts %}
+            {% set ns = namespace(count=0, has_upcoming=false) %}
+            {% for concert in concerts %}
+              {% set date_parts = concert.date.split('-') %}
+              {% set concert_date = date_parts[2] ~ '-' ~ date_parts[1] ~ '-' ~ date_parts[0] %}
+              {% set today = now().strftime('%Y-%m-%d') %}
+              {% if concert_date >= today %}
+                {% set ns.has_upcoming = true %}
+                {% set ns.count = ns.count + 1 %}
+          &#128281; **{{ concert.artist.name }}** at {{ concert.venue.name }} in {{ concert.venue.city }} on {{ concert.date }}
+              {% endif %}
+            {% endfor %}
+            {% if ns.has_upcoming %}
+              
+          ---
+          **{{ ns.count }}** upcoming concert{{ 's' if ns.count != 1 else '' }}
+            {% else %}
+          &#128532; No upcoming concerts
+          
+          &#128161; [Find concerts on Setlist.fm](https://www.setlist.fm)
+            {% endif %}
+          {% else %}
+          &#8987; Loading concert data...
+          {% endif %}
+
+      # Recent Concerts Section
+      - type: markdown
+        content: |
+          ## &#127928; Recently Attended
+          
+          {% set concerts = state_attr('sensor.setlistfm_ianpleasance_concerts', 'concerts') %}
+          {% if concerts %}
+            {% set ns = namespace(count=0, has_past=false) %}
+            {% for concert in concerts %}
+              {% if ns.count < 5 %}
+                {% set date_parts = concert.date.split('-') %}
+                {% set concert_date = date_parts[2] ~ '-' ~ date_parts[1] ~ '-' ~ date_parts[0] %}
+                {% set today = now().strftime('%Y-%m-%d') %}
+                {% if concert_date < today %}
+                  {% set ns.has_past = true %}
+                  {% set ns.count = ns.count + 1 %}
+          &#10024; **{{ concert.artist.name }}** at {{ concert.venue.name }} in {{ concert.venue.city }} on {{ concert.date }}
+                {% endif %}
+              {% endif %}
+            {% endfor %}
+            {% if not ns.has_past %}
+          &#127925; No past concerts yet
+            {% endif %}
+          {% else %}
+          &#8987; Loading concert data...
+          {% endif %}
+
+      # Concert Details with Song Counts
+      - type: markdown
+        content: |
+          ## &#127925; Concert Details
+          
+          {% set concerts = state_attr('sensor.setlistfm_ianpleasance_concerts', 'concerts') %}
+          {% if concerts %}
+            {% for concert in concerts[:5] %}
+          
+          ### &#127908; {{ concert.artist.name }}
+          &#128205; **{{ concert.venue.name }}** - {{ concert.venue.city }}, {{ concert.venue.country }}
+          &#128197; **{{ concert.date }}**
+          {% if concert.song_count > 0 %}&#127925; **{{ concert.song_count }}** songs performed{% endif %}
+          &#128279; [View Setlist]({{ concert.url }})
+          
+            {% endfor %}
+          {% else %}
+          &#8987; No concert data
+          {% endif %}
+
+      # Status Footer
+      - type: entities
+        title: Status
+        entities:
+          - entity: sensor.setlistfm_ianpleasance_concerts
+            name: Concerts Displayed
+            icon: mdi:music-note-multiple
+          
+          - entity: sensor.setlistfm_ianpleasance_last_update
+            name: Last Update
+            icon: mdi:clock-outline

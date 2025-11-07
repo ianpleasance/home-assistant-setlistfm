@@ -1,0 +1,69 @@
+# Compact Setlist.fm Dashboard - Raw Configuration Editor
+# Copy ONLY the YAML below (starting with "views:")
+# Replace "ianpleasance" with your Setlist.fm username
+
+views:
+  - title: Concerts
+    path: concerts-compact
+    icon: mdi:music
+    badges: []
+    cards:
+      # Compact Header
+      - type: markdown
+        content: |
+          # &#127925; Concerts
+          
+          **{{ states('sensor.setlistfm_ianpleasance_concerts') }}** shown
+
+      # Next Concert Highlight
+      - type: markdown
+        content: |
+          ## &#127919; Next Concert
+          
+          {% set concerts = state_attr('sensor.setlistfm_ianpleasance_concerts', 'concerts') %}
+          {% if concerts %}
+            {% set ns = namespace(found=false) %}
+            {% for concert in concerts if not ns.found %}
+              {% set date_parts = concert.date.split('-') %}
+              {% set concert_date = date_parts[2] ~ '-' ~ date_parts[1] ~ '-' ~ date_parts[0] %}
+              {% set today = now().strftime('%Y-%m-%d') %}
+              {% if concert_date >= today %}
+                {% set ns.found = true %}
+          
+          **{{ concert.artist.name }}**
+          
+          &#128205; {{ concert.venue.name }}
+          
+          &#128197; {{ concert.date }}
+              {% endif %}
+            {% endfor %}
+            {% if not ns.found %}
+          
+          &#128532; No upcoming concerts
+          
+          [Find shows](https://www.setlist.fm)
+            {% endif %}
+          {% else %}
+          &#8987; Loading...
+          {% endif %}
+
+      # Recent List (Compact)
+      - type: markdown
+        content: |
+          ## &#127928; Recent
+          
+          {% set concerts = state_attr('sensor.setlistfm_ianpleasance_concerts', 'concerts') %}
+          {% if concerts %}
+            {% set ns = namespace(count=0) %}
+            {% for concert in concerts %}
+              {% if ns.count < 3 %}
+                {% set date_parts = concert.date.split('-') %}
+                {% set concert_date = date_parts[2] ~ '-' ~ date_parts[1] ~ '-' ~ date_parts[0] %}
+                {% set today = now().strftime('%Y-%m-%d') %}
+                {% if concert_date < today %}
+                  {% set ns.count = ns.count + 1 %}
+          {{ concert.artist.name }} - {{ concert.date }}
+                {% endif %}
+              {% endif %}
+            {% endfor %}
+          {% endif %}

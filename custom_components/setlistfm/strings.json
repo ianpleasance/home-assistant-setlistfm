@@ -31,16 +31,14 @@
           "number_of_concerts": "Number of concerts to display",
           "date_format": "Date format",
           "show_concerts": "Show concerts"
+        },
+        "data_description": {
+          "refresh_period": "How often to check for new concerts (1-24 hours)",
+          "number_of_concerts": "Maximum number of concerts to display (1-50)",
+          "date_format": "Format for displaying dates",
+          "show_concerts": "Filter which concerts to display"
         }
       }
-    }
-  },
-  "component": {
-    "setlistfm": {
-      "at": "at",
-      "in": "in",
-      "on": "on",
-      "upcoming": "Upcoming"
     }
   }
 }

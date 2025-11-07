@@ -1,0 +1,52 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Setlist.fm einrichten",
+        "description": "Geben Sie Ihren Setlist.fm API-Schlüssel und Benutzernamen ein",
+        "data": {
+          "api_key": "API-Schlüssel",
+          "userid": "Benutzername",
+          "name": "Name (optional)"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Verbindung fehlgeschlagen",
+      "invalid_auth": "Ungültige Authentifizierung",
+      "unknown": "Unerwarteter Fehler"
+    },
+    "abort": {
+      "already_configured": "Dieser Benutzer ist bereits konfiguriert"
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Setlist.fm Optionen",
+        "description": "Konfigurieren Sie Ihre Setlist.fm-Einstellungen",
+        "data": {
+          "number_of_concerts": "Anzahl der Konzerte",
+          "show_concerts": "Konzerte anzeigen",
+          "date_format": "Datumsformat"
+        }
+      }
+    }
+  },
+  "selector": {
+    "show_concerts": {
+      "options": {
+        "all": "Alle",
+        "upcoming": "Bevorstehend",
+        "past": "Vergangen"
+      }
+    },
+    "date_format": {
+      "options": {
+        "dmy": "TT-MM-JJJJ",
+        "mdy": "MM-TT-JJJJ",
+        "ymd": "JJJJ-MM-TT"
+      }
+    }
+  }
+}

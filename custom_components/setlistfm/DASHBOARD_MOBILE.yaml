@@ -1,0 +1,104 @@
+# Mobile-Optimized Setlist.fm Dashboard
+# Copy ONLY the YAML below (starting with "views:")
+# Replace "ianpleasance" with your Setlist.fm username
+
+views:
+  - title: My Concerts
+    path: concerts-mobile
+    icon: mdi:music
+    badges: []
+    cards:
+      # Mobile Header
+      - type: markdown
+        content: |
+          # &#127928; Concerts
+
+      # Stats (Stacked for mobile)
+      - type: markdown
+        content: |
+          ## &#127925; {{ states('sensor.setlistfm_ianpleasance_concerts') }}
+          Concerts Shown
+          
+          ## &#9200; {{ relative_time(states('sensor.setlistfm_ianpleasance_last_update')) }}
+          Last Updated
+
+      # Next Concert (Mobile Friendly)
+      - type: markdown
+        content: |
+          ---
+          
+          ## &#127908; NEXT CONCERT
+          
+          {% set concerts = state_attr('sensor.setlistfm_ianpleasance_concerts', 'concerts') %}
+          {% if concerts %}
+            {% set ns = namespace(found=false) %}
+            {% for concert in concerts if not ns.found %}
+              {% set date_parts = concert.date.split('-') %}
+              {% set concert_date = date_parts[2] ~ '-' ~ date_parts[1] ~ '-' ~ date_parts[0] %}
+              {% set today = now().strftime('%Y-%m-%d') %}
+              {% if concert_date >= today %}
+                {% set ns.found = true %}
+          
+          ### {{ concert.artist.name }}
+          
+          **WHERE:** {{ concert.venue.name }}, {{ concert.venue.city }}
+          
+          **WHEN:** {{ concert.date }}
+              {% endif %}
+            {% endfor %}
+            {% if not ns.found %}
+          
+          No upcoming concerts
+            {% endif %}
+          {% endif %}
+
+      # Upcoming List (Mobile)
+      - type: markdown
+        content: |
+          ---
+          
+          ## &#128281; Upcoming
+          
+          {% set concerts = state_attr('sensor.setlistfm_ianpleasance_concerts', 'concerts') %}
+          {% if concerts %}
+            {% set ns = namespace(count=0, skip_first=false) %}
+            {% for concert in concerts %}
+              {% set date_parts = concert.date.split('-') %}
+              {% set concert_date = date_parts[2] ~ '-' ~ date_parts[1] ~ '-' ~ date_parts[0] %}
+              {% set today = now().strftime('%Y-%m-%d') %}
+              {% if concert_date >= today %}
+                {% if ns.skip_first %}
+          
+          **{{ concert.artist.name }}**
+          {{ concert.date }}
+                {% else %}
+                  {% set ns.skip_first = true %}
+                {% endif %}
+              {% endif %}
+            {% endfor %}
+          {% endif %}
+
+      # Recent (Mobile Simple)
+      - type: markdown
+        content: |
+          ---
+          
+          ## &#10024; Recent
+          
+          {% set concerts = state_attr('sensor.setlistfm_ianpleasance_concerts', 'concerts') %}
+          {% if concerts %}
+            {% set ns = namespace(count=0) %}
+            {% for concert in concerts %}
+              {% if ns.count < 5 %}
+                {% set date_parts = concert.date.split('-') %}
+                {% set concert_date = date_parts[2] ~ '-' ~ date_parts[1] ~ '-' ~ date_parts[0] %}
+                {% set today = now().strftime('%Y-%m-%d') %}
+                {% if concert_date < today %}
+                  {% set ns.count = ns.count + 1 %}
+          
+          **{{ concert.artist.name }}**
+          {{ concert.date }}
+                {% endif %}
+              {% endif %}
+            {% endfor %}
+          {% endif %}
