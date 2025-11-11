@@ -1,9 +1,14 @@
 {
   "domain": "setlistfm",
-  "name": "setlist.fm - Allows the retrieval and display of users' concert attendance data from setlist.fm",
+  "name": "setlist.fm - Retrieves users' concert attendance data from setlist.fm",
   "documentation": "https://github.com/ianpleasance/home-assistant-setlistfm/README.md",
+  "issue_tracker": "https://github.com/ianpleasance/home-assistant-setlistfm/issues",
   "dependencies": [],
   "codeowners": ["@ianpleasance"],
   "requirements": [],
-  "version": "2.0.11"
+  "version": "2.0.12",
+  "config_flow": true
+  "iot_class": "cloud_polling",
+  "requirements": ["aiohttp>=3.8.0"]
 }
+
