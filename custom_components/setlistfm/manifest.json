@@ -1,6 +1,6 @@
 {
   "domain": "setlistfm",
-  "name": "setlist.fm - Retrieves users' concert attendance data from setlist.fm",
+  "name": "setlist.fm",
   "documentation": "https://github.com/ianpleasance/home-assistant-setlistfm/README.md",
   "issue_tracker": "https://github.com/ianpleasance/home-assistant-setlistfm/issues",
   "dependencies": [],
