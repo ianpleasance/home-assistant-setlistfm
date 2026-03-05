@@ -1,3 +1,13 @@
-# Service definitions for Setlist.fm integration
-# Note: Services are dynamically registered per config entry
-# The actual service name will be: setlistfm.force_refresh_{entry_id}
+refresh:
+  name: Refresh
+  description: Force a data refresh for one or all setlist.fm config entries.
+  fields:
+    entry_id:
+      name: Entry ID
+      description: >
+        The config entry ID to refresh. If omitted, all setlist.fm entries are
+        refreshed. Find the entry ID in Settings → Devices & Services →
+        setlist.fm → (entry) → three-dot menu → Info.
+      required: false
+      selector:
+        text:

@@ -1,0 +1,50 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Połącz z Setlist.fm",
+        "description": "Wprowadź swój identyfikator użytkownika Setlist.fm i klucz API. Identyfikator użytkownika znajdziesz w adresie URL swojego profilu; klucz API możesz uzyskać pod adresem https://www.setlist.fm/settings/api",
+        "data": {
+          "userid": "Identyfikator użytkownika",
+          "api_key": "Klucz API",
+          "name": "Nazwa (opcjonalne)"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Nie można połączyć się z Setlist.fm. Sprawdź połączenie internetowe.",
+      "invalid_auth": "Nieprawidłowy klucz API. Sprawdź klucz API i spróbuj ponownie.",
+      "user_not_found": "Użytkownik nie znaleziony. Sprawdź swój identyfikator użytkownika.",
+      "unknown": "Wystąpił nieoczekiwany błąd. Spróbuj ponownie."
+    },
+    "abort": {
+      "already_configured": "Ten użytkownik jest już skonfigurowany."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Skonfiguruj opcje Setlist.fm",
+        "description": "Dostosuj sposób wyświetlania i odświeżania koncertów.",
+        "data": {
+          "refresh_period": "Okres odświeżania (godziny)",
+          "number_of_concerts": "Liczba koncertów do wyświetlenia",
+          "date_format": "Format daty",
+          "show_concerts": "Pokaż koncerty"
+        }
+      }
+    }
+  },
+  "services": {
+    "refresh": {
+      "name": "Odśwież",
+      "description": "Wymuś odświeżenie danych dla jednego lub wszystkich wpisów konfiguracji setlist.fm.",
+      "fields": {
+        "entry_id": {
+          "name": "ID wpisu",
+          "description": "ID wpisu konfiguracji do odświeżenia. Jeśli pominięto, odświeżane są wszystkie wpisy."
+        }
+      }
+    }
+  }
+}

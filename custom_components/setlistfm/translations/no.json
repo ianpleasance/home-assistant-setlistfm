@@ -1,0 +1,50 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Koble til Setlist.fm",
+        "description": "Skriv inn Setlist.fm bruker-ID og API-nøkkel. Du finner bruker-ID-en din i profil-URL-en, og kan hente en API-nøkkel fra https://www.setlist.fm/settings/api",
+        "data": {
+          "userid": "Bruker-ID",
+          "api_key": "API-nøkkel",
+          "name": "Navn (valgfritt)"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Tilkobling til Setlist.fm mislyktes. Sjekk internettforbindelsen din.",
+      "invalid_auth": "Ugyldig API-nøkkel. Sjekk API-nøkkelen din og prøv igjen.",
+      "user_not_found": "Bruker ikke funnet. Sjekk bruker-ID-en din.",
+      "unknown": "Uventet feil oppstod. Prøv igjen."
+    },
+    "abort": {
+      "already_configured": "Denne brukeren er allerede konfigurert."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Konfigurer Setlist.fm-alternativer",
+        "description": "Tilpass hvordan konserter vises og oppdateres.",
+        "data": {
+          "refresh_period": "Oppdateringsperiode (timer)",
+          "number_of_concerts": "Antall konserter som skal vises",
+          "date_format": "Datoformat",
+          "show_concerts": "Vis konserter"
+        }
+      }
+    }
+  },
+  "services": {
+    "refresh": {
+      "name": "Oppdater",
+      "description": "Tving en dataoppdatering for én eller alle setlist.fm-konfigurasjonsoppføringer.",
+      "fields": {
+        "entry_id": {
+          "name": "Oppførings-ID",
+          "description": "Konfigurasjonsoppførings-ID-en som skal oppdateres. Hvis utelatt, oppdateres alle oppføringer."
+        }
+      }
+    }
+  }
+}

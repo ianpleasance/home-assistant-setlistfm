@@ -33,7 +33,7 @@ This custom integration allows you to display your concert attendance data from 
 
 ### Getting Your Setlist.fm Credentials
 
-1. **User ID**: 
+1. **User ID**:
    - Go to your Setlist.fm profile
    - Your User ID is in the URL: `https://www.setlist.fm/user/YOUR_USER_ID`
 
@@ -73,7 +73,7 @@ After adding the integration, you can configure options:
 
 ## Entities Created
 
-For each configured user, the integration creates two sensors:
+For each configured user, the integration creates two sensors grouped under a device:
 
 ### 1. Concerts Sensor
 **Entity ID**: `sensor.setlistfm_{name}_concerts`
@@ -81,80 +81,43 @@ For each configured user, the integration creates two sensors:
 **State**: Number of concerts (based on your filters)
 
 **Attributes**:
-```json
-{
-  "concerts": [
-    {
-      "id": "134f893d",
-      "date": "05-11-2025",
-      "artist": {
-        "name": "Black Bordello",
-        "mbid": "75fd16ad-3c6b-4357-af72-71a344bacb4c"
-      },
-      "venue": {
-        "name": "Hot Box",
-        "city": "Chelmsford",
-        "state": "England",
-        "country": "United Kingdom"
-      },
-      "song_count": 9,
-      "url": "https://www.setlist.fm/setlist/..."
-    }
-  ],
-  "concert_list": "Artist at Venue in City on DD-MM-YYYY\n...",
-  "total_attended": 150
-}
-```
-
 - `concerts`: Simplified JSON array of concert data
 - `concert_list`: Formatted text list (one concert per line)
-- `total_attended`: Total concerts attended from user profile (all time)
-
-**Example**:
-```
-State: 10
-Attributes:
-  concerts: [
-    {
-      "id": "abc123",
-      "date": "31-12-2024",
-      "artist": {
-        "name": "The Beatles",
-        "mbid": "..."
-      },
-      "venue": {
-        "name": "Royal Albert Hall",
-        "city": "London",
-        "state": "England",
-        "country": "United Kingdom"
-      },
-      "song_count": 15,
-      "url": "https://www.setlist.fm/setlist/..."
-    }
-  ]
-  concert_list: |
-    The Beatles at Royal Albert Hall in London on 31-12-2024
-    Pink Floyd at Madison Square Garden in New York on 15-11-2024 (Upcoming)
-    Queen at Wembley Stadium in London on 12-07-2024
-  total_attended: 150
-```
 
 ### 2. Last Update Sensor
 **Entity ID**: `sensor.setlistfm_{name}_last_update`
 
-**State**: Timestamp of last successful update
+**State**: Timestamp of last successful update (device_class: timestamp)
 
 **Attributes**:
 - `last_update_success`: Boolean indicating if last update was successful
-- `last_error`: Error message (if any)
+- `last_error`: Error message if the last update failed
 
 ## Services
 
-### `setlistfm.force_refresh_{entry_id}`
+### `setlistfm.refresh`
 
-Force an immediate refresh of concert data for a specific user.
+Force an immediate refresh of concert data.
 
-**Example Automation**:
+| Field | Required | Description |
+|-------|----------|-------------|
+| `entry_id` | No | Config entry ID to refresh. If omitted, all setlist.fm entries are refreshed. |
+
+Find the entry ID in **Settings → Devices & Services → setlist.fm → (entry) → three-dot menu → Info**.
+
+**Example — refresh a specific entry**:
+```yaml
+service: setlistfm.refresh
+data:
+  entry_id: abc123def456abc123def456abc123de
+```
+
+**Example — refresh all entries**:
+```yaml
+service: setlistfm.refresh
+```
+
+**Example automation**:
 ```yaml
 automation:
   - alias: "Refresh Setlist.fm Daily"
@@ -162,22 +125,10 @@ automation:
       - platform: time
         at: "06:00:00"
     action:
-      - service: setlistfm.force_refresh_abc123def456
+      - service: setlistfm.refresh
 ```
 
 ## Usage Examples
-
-### 🎨 Beautiful Dashboards
-
-Want to create stunning concert dashboards with emojis and visual flair? Check out our comprehensive **[DASHBOARDS.md](DASHBOARDS.md)** guide with:
-
-- 🎸 Complete dashboard layouts
-- 🎤 Individual card examples  
-- 📊 Stats cards with emojis
-- 🎯 Next concert countdowns
-- 🗓️ Calendar views
-- 🌈 Mushroom card examples
-- 🎨 Custom styling options
 
 ### Display in Lovelace
 
@@ -208,6 +159,8 @@ content: |
   🔜 {{ concert.replace('(Upcoming)', '') }}
   {% endfor %}
 ```
+
+For more dashboard examples see [DASHBOARDS.md](DASHBOARDS.md).
 
 ### Automation Example
 
@@ -241,10 +194,6 @@ If you were using the old YAML-based version:
 3. **Remove YAML configuration** - Delete the `setlistfm:` section from `configuration.yaml`
 4. **Add via UI** - Configure through the UI as described above
 5. **Update automations** - Entity IDs have changed:
-   - Old: `text.setlistfm_{name}_concerts` → New: `sensor.setlistfm_{name}_concerts`
-   - Attribute changed: Access via `state_attr('sensor.setlistfm_{name}_concerts', 'concert_list')`
-
-### Entity ID Changes
 
 | Old Entity | New Entity |
 |------------|------------|
@@ -266,30 +215,36 @@ If you were using the old YAML-based version:
 ### No Concerts Showing
 - Check your filter settings (upcoming/past/all)
 - Verify you have concerts logged on Setlist.fm
-- Check the `total_attended` attribute to see if data is being fetched
 
 ### Rate Limiting
-- The integration has built-in retry logic
+- The integration has built-in retry logic (3 attempts)
 - Default refresh is 6 hours to avoid rate limits
-- Consider increasing the refresh period if you hit rate limits
+- Consider increasing the refresh period if you hit rate limits frequently
 
-## API Rate Limits
+### Enable Debug Logging
 
-Setlist.fm has rate limits on their API:
-- **Recommendation**: Use refresh periods of 6+ hours
-- The integration automatically retries (3 attempts) when rate limited
-- Check the `last_update` sensor for error messages
+Add to `configuration.yaml`:
+```yaml
+logger:
+  default: info
+  logs:
+    custom_components.setlistfm: debug
+```
+
+Then restart and check: **Settings → System → Logs**
+
+## Changelog
+
+See [CHANGELOG.md](CHANGELOG.md) for full version history.
 
 ## Support
 
 - **Issues**: [GitHub Issues](https://github.com/ianpleasance/home-assistant-setlistfm/issues)
-- **Documentation**: [GitHub README](https://github.com/ianpleasance/home-assistant-setlistfm)
 
 ## Credits
 
 - Original version by [@ianpleasance](https://github.com/ianpleasance)
-- Modernized for Home Assistant 2024+ with config flow support
 
 ## License
 
-This project is licensed under the Apache 2.0.
+This project is licensed under the Apache 2.0 License.

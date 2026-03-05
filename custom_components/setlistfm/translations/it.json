@@ -14,6 +14,7 @@
     "error": {
       "cannot_connect": "Connessione non riuscita",
       "invalid_auth": "Autenticazione non valida",
+      "user_not_found": "Utente non trovato. Verifica il tuo ID utente.",
       "unknown": "Errore imprevisto"
     },
     "abort": {
@@ -26,6 +27,7 @@
         "title": "Opzioni Setlist.fm",
         "description": "Configura le tue impostazioni Setlist.fm",
         "data": {
+          "refresh_period": "Periodo di aggiornamento (ore)",
           "number_of_concerts": "Numero di concerti",
           "show_concerts": "Mostra concerti",
           "date_format": "Formato data"
@@ -33,19 +35,15 @@
       }
     }
   },
-  "selector": {
-    "show_concerts": {
-      "options": {
-        "all": "Tutti",
-        "upcoming": "Prossimi",
-        "past": "Passati"
-      }
-    },
-    "date_format": {
-      "options": {
-        "dmy": "GG-MM-AAAA",
-        "mdy": "MM-GG-AAAA",
-        "ymd": "AAAA-MM-GG"
+  "services": {
+    "refresh": {
+      "name": "Aggiorna",
+      "description": "Forza un aggiornamento dei dati per una o tutte le voci setlist.fm.",
+      "fields": {
+        "entry_id": {
+          "name": "ID voce",
+          "description": "L'ID voce di configurazione da aggiornare. Se omesso, vengono aggiornate tutte le voci."
+        }
       }
     }
   }

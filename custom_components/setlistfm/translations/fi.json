@@ -1,0 +1,50 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Yhdistä Setlist.fm-palveluun",
+        "description": "Anna Setlist.fm-käyttäjätunnuksesi ja API-avaimesi. Löydät käyttäjätunnuksesi profiilin URL-osoitteesta ja voit hankkia API-avaimen osoitteesta https://www.setlist.fm/settings/api",
+        "data": {
+          "userid": "Käyttäjätunnus",
+          "api_key": "API-avain",
+          "name": "Nimi (valinnainen)"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Yhteys Setlist.fm-palveluun epäonnistui. Tarkista internetyhteytesi.",
+      "invalid_auth": "Virheellinen API-avain. Tarkista API-avaimesi ja yritä uudelleen.",
+      "user_not_found": "Käyttäjää ei löydy. Tarkista käyttäjätunnuksesi.",
+      "unknown": "Odottamaton virhe tapahtui. Yritä uudelleen."
+    },
+    "abort": {
+      "already_configured": "Tämä käyttäjä on jo määritetty."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Määritä Setlist.fm-asetukset",
+        "description": "Mukauta konserttien näyttämistä ja päivittämistä.",
+        "data": {
+          "refresh_period": "Päivitysväli (tuntia)",
+          "number_of_concerts": "Näytettävien konserttien määrä",
+          "date_format": "Päivämäärämuoto",
+          "show_concerts": "Näytä konsertit"
+        }
+      }
+    }
+  },
+  "services": {
+    "refresh": {
+      "name": "Päivitä",
+      "description": "Pakota tietojen päivitys yhdelle tai kaikille setlist.fm-konfiguraatiomerkinnöille.",
+      "fields": {
+        "entry_id": {
+          "name": "Merkinnän tunnus",
+          "description": "Päivitettävän konfiguraatiomerkinnän tunnus. Jos jätetty tyhjäksi, kaikki merkinnät päivitetään."
+        }
+      }
+    }
+  }
+}

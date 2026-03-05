@@ -1,0 +1,50 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Conectar a Setlist.fm",
+        "description": "Introduce tu ID de usuario de Setlist.fm y clave API. Puedes encontrar tu ID de usuario en la URL de tu perfil, y obtener una clave API en https://www.setlist.fm/settings/api",
+        "data": {
+          "userid": "ID de usuario",
+          "api_key": "Clave API",
+          "name": "Nombre (opcional)"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "No se pudo conectar a Setlist.fm. Comprueba tu conexión a internet.",
+      "invalid_auth": "Clave API no válida. Por favor, verifica tu clave API e inténtalo de nuevo.",
+      "user_not_found": "Usuario no encontrado. Por favor, verifica tu ID de usuario.",
+      "unknown": "Ocurrió un error inesperado. Por favor, inténtalo de nuevo."
+    },
+    "abort": {
+      "already_configured": "Este usuario ya está configurado."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Configurar opciones de Setlist.fm",
+        "description": "Personaliza cómo se muestran y actualizan los conciertos.",
+        "data": {
+          "refresh_period": "Período de actualización (horas)",
+          "number_of_concerts": "Número de conciertos a mostrar",
+          "date_format": "Formato de fecha",
+          "show_concerts": "Mostrar conciertos"
+        }
+      }
+    }
+  },
+  "services": {
+    "refresh": {
+      "name": "Actualizar",
+      "description": "Forzar una actualización de datos para una o todas las entradas de setlist.fm.",
+      "fields": {
+        "entry_id": {
+          "name": "ID de entrada",
+          "description": "El ID de entrada de configuración a actualizar. Si se omite, se actualizan todas las entradas."
+        }
+      }
+    }
+  }
+}

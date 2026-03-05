@@ -35,12 +35,16 @@
       }
     }
   },
-  "component": {
-    "setlistfm": {
-      "at": "at",
-      "in": "in",
-      "on": "on",
-      "upcoming": "Upcoming"
+  "services": {
+    "refresh": {
+      "name": "Refresh",
+      "description": "Force a data refresh for one or all setlist.fm config entries.",
+      "fields": {
+        "entry_id": {
+          "name": "Entry ID",
+          "description": "The config entry ID to refresh. If omitted, all entries are refreshed."
+        }
+      }
     }
   }
 }

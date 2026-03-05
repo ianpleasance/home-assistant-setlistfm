@@ -1,15 +1,13 @@
 {
   "domain": "setlistfm",
   "name": "setlist.fm",
-  "documentation": "https://github.com/ianpleasance/home-assistant-setlistfm/README.md",
+  "documentation": "https://github.com/ianpleasance/home-assistant-setlistfm",
   "issue_tracker": "https://github.com/ianpleasance/home-assistant-setlistfm/issues",
   "dependencies": [],
   "codeowners": ["@ianpleasance"],
-  "requirements": [],
-  "version": "2.0.19",
+  "requirements": ["aiohttp>=3.8.0"],
+  "version": "2.0.20",
   "config_flow": true,
   "iot_class": "cloud_polling",
-  "requirements": ["aiohttp>=3.8.0"],
-  "icon": "mdi:guitar-acoustic" 
+  "icon": "mdi:guitar-acoustic"
 }
-

@@ -1,0 +1,50 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Verbinding maken met Setlist.fm",
+        "description": "Voer uw Setlist.fm gebruikers-ID en API-sleutel in. Uw gebruikers-ID staat in uw profiel-URL; een API-sleutel kunt u ophalen via https://www.setlist.fm/settings/api",
+        "data": {
+          "userid": "Gebruikers-ID",
+          "api_key": "API-sleutel",
+          "name": "Naam (optioneel)"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Verbinding met Setlist.fm mislukt. Controleer uw internetverbinding.",
+      "invalid_auth": "Ongeldige API-sleutel. Controleer uw API-sleutel en probeer opnieuw.",
+      "user_not_found": "Gebruiker niet gevonden. Controleer uw gebruikers-ID.",
+      "unknown": "Onverwachte fout opgetreden. Probeer het opnieuw."
+    },
+    "abort": {
+      "already_configured": "Deze gebruiker is al geconfigureerd."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Setlist.fm-opties configureren",
+        "description": "Pas aan hoe concerten worden weergegeven en vernieuwd.",
+        "data": {
+          "refresh_period": "Verversingsperiode (uren)",
+          "number_of_concerts": "Aantal weer te geven concerten",
+          "date_format": "Datumnotatie",
+          "show_concerts": "Concerten weergeven"
+        }
+      }
+    }
+  },
+  "services": {
+    "refresh": {
+      "name": "Vernieuwen",
+      "description": "Forceer een gegevensverversing voor één of alle setlist.fm-configuratie-items.",
+      "fields": {
+        "entry_id": {
+          "name": "Item-ID",
+          "description": "Het configuratie-item-ID om te vernieuwen. Als weggelaten, worden alle items vernieuwd."
+        }
+      }
+    }
+  }
+}

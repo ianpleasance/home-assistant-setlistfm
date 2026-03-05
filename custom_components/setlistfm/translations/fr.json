@@ -14,6 +14,7 @@
     "error": {
       "cannot_connect": "Échec de la connexion",
       "invalid_auth": "Authentification invalide",
+      "user_not_found": "Utilisateur introuvable. Veuillez vérifier votre identifiant.",
       "unknown": "Erreur inattendue"
     },
     "abort": {
@@ -26,6 +27,7 @@
         "title": "Options Setlist.fm",
         "description": "Configurez vos paramètres Setlist.fm",
         "data": {
+          "refresh_period": "Période de rafraîchissement (heures)",
           "number_of_concerts": "Nombre de concerts",
           "show_concerts": "Afficher les concerts",
           "date_format": "Format de date"
@@ -33,19 +35,15 @@
       }
     }
   },
-  "selector": {
-    "show_concerts": {
-      "options": {
-        "all": "Tous",
-        "upcoming": "À venir",
-        "past": "Passés"
-      }
-    },
-    "date_format": {
-      "options": {
-        "dmy": "JJ-MM-AAAA",
-        "mdy": "MM-JJ-AAAA",
-        "ymd": "AAAA-MM-JJ"
+  "services": {
+    "refresh": {
+      "name": "Actualiser",
+      "description": "Force une actualisation des données pour une ou toutes les entrées setlist.fm.",
+      "fields": {
+        "entry_id": {
+          "name": "ID d'entrée",
+          "description": "L'ID d'entrée de configuration à actualiser. Si omis, toutes les entrées sont actualisées."
+        }
       }
     }
   }

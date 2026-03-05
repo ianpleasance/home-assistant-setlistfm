@@ -1,0 +1,50 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Anslut till Setlist.fm",
+        "description": "Ange ditt Setlist.fm användar-ID och API-nyckel. Du hittar ditt användar-ID i din profil-URL och kan hämta en API-nyckel från https://www.setlist.fm/settings/api",
+        "data": {
+          "userid": "Användar-ID",
+          "api_key": "API-nyckel",
+          "name": "Namn (valfritt)"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Det gick inte att ansluta till Setlist.fm. Kontrollera din internetanslutning.",
+      "invalid_auth": "Ogiltig API-nyckel. Kontrollera din API-nyckel och försök igen.",
+      "user_not_found": "Användaren hittades inte. Kontrollera ditt användar-ID.",
+      "unknown": "Oväntat fel uppstod. Försök igen."
+    },
+    "abort": {
+      "already_configured": "Den här användaren är redan konfigurerad."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Konfigurera Setlist.fm-alternativ",
+        "description": "Anpassa hur konserter visas och uppdateras.",
+        "data": {
+          "refresh_period": "Uppdateringsperiod (timmar)",
+          "number_of_concerts": "Antal konserter att visa",
+          "date_format": "Datumformat",
+          "show_concerts": "Visa konserter"
+        }
+      }
+    }
+  },
+  "services": {
+    "refresh": {
+      "name": "Uppdatera",
+      "description": "Tvinga en datauppdatering för en eller alla setlist.fm-konfigurationsposter.",
+      "fields": {
+        "entry_id": {
+          "name": "Post-ID",
+          "description": "Konfigurationspost-ID att uppdatera. Om utelämnat uppdateras alla poster."
+        }
+      }
+    }
+  }
+}

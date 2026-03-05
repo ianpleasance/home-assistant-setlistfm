@@ -1,0 +1,50 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Setlist.fmに接続",
+        "description": "Setlist.fmのユーザーIDとAPIキーを入力してください。ユーザーIDはプロフィールURLで確認でき、APIキーはhttps://www.setlist.fm/settings/apiから取得できます。",
+        "data": {
+          "userid": "ユーザーID",
+          "api_key": "APIキー",
+          "name": "名前（任意）"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Setlist.fmへの接続に失敗しました。インターネット接続を確認してください。",
+      "invalid_auth": "APIキーが無効です。APIキーを確認して再試行してください。",
+      "user_not_found": "ユーザーが見つかりません。ユーザーIDを確認してください。",
+      "unknown": "予期しないエラーが発生しました。再試行してください。"
+    },
+    "abort": {
+      "already_configured": "このユーザーはすでに設定されています。"
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Setlist.fmオプションを設定",
+        "description": "コンサートの表示と更新方法をカスタマイズします。",
+        "data": {
+          "refresh_period": "更新間隔（時間）",
+          "number_of_concerts": "表示するコンサート数",
+          "date_format": "日付形式",
+          "show_concerts": "コンサートを表示"
+        }
+      }
+    }
+  },
+  "services": {
+    "refresh": {
+      "name": "更新",
+      "description": "1つまたはすべてのsetlist.fm設定エントリのデータを強制更新します。",
+      "fields": {
+        "entry_id": {
+          "name": "エントリID",
+          "description": "更新する設定エントリID。省略した場合、すべてのエントリが更新されます。"
+        }
+      }
+    }
+  }
+}
