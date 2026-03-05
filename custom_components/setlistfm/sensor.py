@@ -4,7 +4,7 @@ from __future__ import annotations
 from datetime import datetime
 import logging
 
-from homeassistant.components.sensor import SensorDeviceClass, SensorEntity, SensorStateClass
+from homeassistant.components.sensor import SensorEntity, SensorStateClass
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.device_registry import DeviceEntryType
@@ -45,7 +45,6 @@ async def async_setup_entry(
 
     entities = [
         SetlistFmConcertsSensor(coordinator, entry),
-        SetlistFmLastUpdateSensor(coordinator, entry),
     ]
 
     async_add_entities(entities)
@@ -79,6 +78,7 @@ class SetlistFmConcertsSensor(CoordinatorEntity, SensorEntity):
         self._attr_name = f"{entry.data.get(CONF_NAME, entry.data['userid'])} Concerts"
         self._attr_unique_id = f"{entry.entry_id}_concerts"
         self._attr_device_info = _device_info(entry)
+        self._last_update_time = dt_util.now()
 
     @property
     def native_value(self) -> int:
@@ -92,6 +92,9 @@ class SetlistFmConcertsSensor(CoordinatorEntity, SensorEntity):
         """Return the state attributes."""
         if self.coordinator.data is None:
             return {}
+
+        if self.coordinator.last_update_success:
+            self._last_update_time = dt_util.now()
 
         concerts = self._get_filtered_concerts()
         concert_lines = self._format_concerts(concerts)
@@ -130,10 +133,15 @@ class SetlistFmConcertsSensor(CoordinatorEntity, SensorEntity):
                 _LOGGER.warning("Error simplifying concert data: %s", err)
                 continue
 
-        return {
+        attrs = {
             "concerts": simplified_concerts,
             "concert_list": "\n".join(concert_lines),
+            "last_updated": self._last_update_time.isoformat(),
+            "last_update_success": self.coordinator.last_update_success,
         }
+        if self.coordinator.last_exception:
+            attrs["last_error"] = str(self.coordinator.last_exception)
+        return attrs
 
     def _get_filtered_concerts(self) -> list:
         """Get filtered and sorted concerts based on options."""
@@ -209,41 +217,3 @@ class SetlistFmConcertsSensor(CoordinatorEntity, SensorEntity):
                 continue
 
         return lines
-
-
-class SetlistFmLastUpdateSensor(CoordinatorEntity, SensorEntity):
-    """Representation of the last update sensor."""
-
-    _attr_icon = "mdi:clock-outline"
-    _attr_device_class = SensorDeviceClass.TIMESTAMP
-
-    def __init__(
-        self,
-        coordinator: SetlistFmCoordinator,
-        entry: ConfigEntry,
-    ) -> None:
-        """Initialize the sensor."""
-        super().__init__(coordinator)
-        self._entry = entry
-        self._userid = entry.data["userid"]
-        self._attr_name = f"{entry.data.get(CONF_NAME, entry.data['userid'])} Last Update"
-        self._attr_unique_id = f"{entry.entry_id}_last_update"
-        self._attr_device_info = _device_info(entry)
-        self._last_update_time = dt_util.now()
-
-    @property
-    def native_value(self):
-        """Return the last update time as a timezone-aware datetime."""
-        if self.coordinator.last_update_success:
-            self._last_update_time = dt_util.now()
-        return self._last_update_time
-
-    @property
-    def extra_state_attributes(self) -> dict:
-        """Return the state attributes."""
-        attrs: dict = {
-            "last_update_success": self.coordinator.last_update_success,
-        }
-        if self.coordinator.last_exception:
-            attrs["last_error"] = str(self.coordinator.last_exception)
-        return attrs
