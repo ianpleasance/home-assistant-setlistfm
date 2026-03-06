@@ -5,6 +5,7 @@ from datetime import datetime
 import logging
 
 from homeassistant.components.sensor import SensorEntity, SensorStateClass
+from homeassistant.const import ATTR_ATTRIBUTION
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.device_registry import DeviceEntryType
@@ -134,6 +135,7 @@ class SetlistFmConcertsSensor(CoordinatorEntity, SensorEntity):
                 continue
 
         attrs = {
+            ATTR_ATTRIBUTION: "Data provided by setlist.fm (https://www.setlist.fm)",
             "concerts": simplified_concerts,
             "concert_list": "\n".join(concert_lines),
             "last_updated": self._last_update_time.isoformat(),
