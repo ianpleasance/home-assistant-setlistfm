@@ -138,7 +138,7 @@ class SetlistFmConcertsSensor(CoordinatorEntity, SensorEntity):
             ATTR_ATTRIBUTION: "Data provided by setlist.fm (https://www.setlist.fm)",
             "concerts": simplified_concerts,
             "concert_list": "\n".join(concert_lines),
-            "last_updated": self._last_update_time(),
+            "last_updated": self._last_update_time,
             "last_update_success": self.coordinator.last_update_success,
         }
         if self.coordinator.last_exception:
