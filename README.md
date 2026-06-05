@@ -216,6 +216,10 @@ If you were using the old YAML-based version:
 - Check your filter settings (upcoming/past/all)
 - Verify you have concerts logged on Setlist.fm
 
+### Upcoming Concerts not Showing
+
+setlist.fm's definition of an Upcoming Concert is unusual from an API perspective. There isn't an API call to retrieve upcoming concerts, just concerts. The API call to retrieve concerts returns past concerts and concerts that are due within a short period of time - approximately 7-10 days. This means that if you mark two concerts as 'I am attending' in your setlist.fm account and one is due in 3 weeks time and one in 1 week, then only the second one will be returned in API calls. So 'Upcoming' means 'Upcoming very soon' not 'All Upcoming'.
+
 ### Rate Limiting
 - The integration has built-in retry logic (3 attempts)
 - Default refresh is 6 hours to avoid rate limits
