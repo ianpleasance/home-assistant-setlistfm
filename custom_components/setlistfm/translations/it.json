@@ -8,17 +8,30 @@
           "api_key": "Chiave API",
           "userid": "Nome utente",
           "name": "Nome (facoltativo)"
+        },
+        "data_description": {
+          "userid": "Il nome utente è la parte dopo /user/ nell'URL del profilo ed è visibile anche in alto a destra accanto a \"Add setlist\". Viene convertito automaticamente in minuscolo."
+        }
+      },
+      "reauth_confirm": {
+        "title": "Riconnetti a Setlist.fm",
+        "description": "La chiave API di {username} non è più accettata. Inserisci una nuova chiave per riconnettere questo account esistente.",
+        "data": {
+          "api_key": "Chiave API"
         }
       }
     },
     "error": {
+      "invalid_username": "Inserisci un nome utente che non sia vuoto o composto solo da spazi.",
       "cannot_connect": "Connessione non riuscita",
       "invalid_auth": "Autenticazione non valida",
-      "user_not_found": "Utente non trovato. Verifica il tuo ID utente.",
+      "rate_limited": "Setlist.fm sta limitando le richieste. Attendi prima di riprovare.",
+      "invalid_response": "Setlist.fm ha restituito una risposta imprevista o incompleta. Riprova più tardi.",
       "unknown": "Errore imprevisto"
     },
     "abort": {
-      "already_configured": "Questo utente è già configurato"
+      "already_configured": "Questo utente è già configurato",
+      "reauth_successful": "Nuova autenticazione completata."
     }
   },
   "options": {
@@ -31,18 +44,62 @@
           "number_of_concerts": "Numero di concerti",
           "show_concerts": "Mostra concerti",
           "date_format": "Formato data"
+        },
+        "data_description": {
+          "refresh_period": "Frequenza di ricerca di nuovi concerti (1-24 ore)",
+          "number_of_concerts": "Numero massimo di esibizioni individuali e, separatamente, di visite raggruppate ai concerti da mostrare (1-50); non modifica il totale delle visite",
+          "date_format": "Formato di visualizzazione delle date",
+          "show_concerts": "Filtra per data le esibizioni e le visite raggruppate mostrate; non modifica il totale delle visite"
         }
       }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "concerts": {
+        "name": "Concerti mostrati"
+      },
+      "total_concerts": {
+        "name": "Concerti totali"
+      },
+      "unique_concert_visits": {
+        "name": "Visite uniche ai concerti"
+      },
+      "next_concert": {
+        "name": "Prossimo concerto"
+      },
+      "last_update": {
+        "name": "Ultimo aggiornamento riuscito"
+      }
+    },
+    "button": {
+      "refresh": {
+        "name": "Aggiorna"
+      }
+    }
+  },
+  "exceptions": {
+    "invalid_entry": {
+      "message": "La voce di configurazione {entry_id} non è una voce setlist.fm caricata."
+    },
+    "no_loaded_entries": {
+      "message": "Nessuna voce setlist.fm è caricata. Controlla la configurazione dell'integrazione."
+    },
+    "entry_unloaded": {
+      "message": "Questa voce setlist.fm è stata rimossa dalla memoria prima del completamento dell'aggiornamento."
+    },
+    "refresh_failed": {
+      "message": "Impossibile aggiornare {entries}: {error}"
     }
   },
   "services": {
     "refresh": {
       "name": "Aggiorna",
-      "description": "Forza un aggiornamento dei dati per una o tutte le voci setlist.fm.",
+      "description": "Forza un aggiornamento dei dati per una o tutte le voci setlist.fm caricate.",
       "fields": {
         "entry_id": {
           "name": "ID voce",
-          "description": "L'ID voce di configurazione da aggiornare. Se omesso, vengono aggiornate tutte le voci."
+          "description": "L'ID della voce di configurazione da aggiornare. Se omesso, vengono aggiornate tutte le voci caricate. Una voce indicata esplicitamente deve essere una voce setlist.fm caricata."
         }
       }
     }

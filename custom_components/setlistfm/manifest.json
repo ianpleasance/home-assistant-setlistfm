@@ -3,11 +3,11 @@
   "name": "setlist.fm",
   "documentation": "https://github.com/ianpleasance/home-assistant-setlistfm",
   "issue_tracker": "https://github.com/ianpleasance/home-assistant-setlistfm/issues",
-  "dependencies": [],
+  "dependencies": ["frontend"],
   "codeowners": ["@ianpleasance"],
-  "requirements": ["aiohttp>=3.8.0"],
+  "requirements": [],
+  "integration_type": "service",
   "version": "2.1.2",
   "config_flow": true,
-  "iot_class": "cloud_polling",
-  "icon": "mdi:guitar-acoustic"
+  "iot_class": "cloud_polling"
 }

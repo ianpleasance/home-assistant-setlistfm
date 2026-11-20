@@ -1,13 +1,13 @@
 refresh:
   name: Refresh
-  description: Force a data refresh for one or all setlist.fm config entries.
+  description: Refresh one or all loaded setlist.fm entries and wait for the result.
   fields:
     entry_id:
       name: Entry ID
       description: >
-        The config entry ID to refresh. If omitted, all setlist.fm entries are
-        refreshed. Find the entry ID in Settings → Devices & Services →
-        setlist.fm → (entry) → three-dot menu → Info.
+        The loaded setlist.fm entry to refresh. If omitted, all loaded entries
+        are refreshed. Empty, unknown, foreign or unloaded IDs are rejected.
       required: false
       selector:
-        text:
+        config_entry:
+          integration: setlistfm

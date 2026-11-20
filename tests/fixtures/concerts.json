@@ -1,0 +1,56 @@
+[
+  {
+    "id": "documented",
+    "eventDate": "01-01-2026",
+    "artist": {"name": "Example Artist", "mbid": "example-mbid"},
+    "venue": {
+      "name": "Example Venue",
+      "city": {"name": "Example City", "state": "Example State", "country": {"name": "Example Country"}}
+    },
+    "set": [{"song": [{"name": "First Song"}, {"name": "Second Song"}]}, {"encore": 1, "song": [{"name": "Encore Song"}]}],
+    "url": "https://www.setlist.fm/setlist/example/documented.html"
+  },
+  {
+    "id": "deployed",
+    "eventDate": "02-01-2026",
+    "artist": {"name": "Example Artist", "mbid": "example-mbid"},
+    "venue": {
+      "name": "Example Venue",
+      "city": {"name": "Example City", "state": "Example State", "country": {"name": "Example Country"}}
+    },
+    "sets": {"set": [{"song": [{"name": "First Song"}, {"name": "Second Song"}]}, {"encore": 1, "song": [{"name": "Encore Song"}]}]},
+    "url": "https://www.setlist.fm/setlist/example/deployed.html"
+  },
+  {
+    "id": "both",
+    "eventDate": "03-01-2026",
+    "set": [{"song": [{"name": "Song"}]}],
+    "sets": {"set": [{"song": [{"name": "Song"}, {"name": "Duplicate Representation"}]}]}
+  },
+  {
+    "id": "empty",
+    "eventDate": "04-01-2026",
+    "set": [],
+    "sets": {"set": [{"song": [{"name": "Do Not Count"}]}]}
+  },
+  {
+    "id": "optional",
+    "eventDate": "05-01-2026",
+    "artist": null,
+    "venue": {"city": {"country": null}},
+    "sets": null
+  },
+  {
+    "id": "malformed-optional",
+    "eventDate": "06-01-2026",
+    "artist": "invalid",
+    "venue": {"name": 42, "city": []},
+    "set": [null, {"song": "invalid"}, {"song": [null, {"name": "Valid"}]}],
+    "url": null
+  },
+  {
+    "id": "bad-date",
+    "eventDate": "32-13-2026"
+  },
+  null
+]

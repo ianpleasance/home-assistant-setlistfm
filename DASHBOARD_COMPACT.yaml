@@ -1,6 +1,8 @@
 # Compact Setlist.fm Dashboard - Raw Configuration Editor
 # Copy ONLY the YAML below (starting with "views:")
-# Replace "ianpleasance" with your Setlist.fm username
+# Replace every full entity ID with the actual ID in your entity settings.
+# IDs do not inherently start with setlistfm_; legacy references are placeholders.
+# Lists are display-filtered; Next concert uses all API-available setlists.
 
 views:
   - title: Concerts
@@ -20,31 +22,17 @@ views:
         content: |
           ## &#127919; Next Concert
           
-          {% set concerts = state_attr('sensor.setlistfm_ianpleasance_concerts', 'concerts') %}
-          {% if concerts %}
-            {% set ns = namespace(found=false) %}
-            {% for concert in concerts if not ns.found %}
-              {% set date_parts = concert.date.split('-') %}
-              {% set concert_date = date_parts[2] ~ '-' ~ date_parts[1] ~ '-' ~ date_parts[0] %}
-              {% set today = now().strftime('%Y-%m-%d') %}
-              {% if concert_date >= today %}
-                {% set ns.found = true %}
+          {% set entity = 'sensor.yourname_next_concert' %}
+          {% if has_value(entity) %}
           
-          **{{ concert.artist.name }}**
+          **{{ state_attr(entity, 'artist') }}**
           
-          &#128205; {{ concert.venue.name }}
+          &#128205; {{ state_attr(entity, 'venue') }}
           
-          &#128197; {{ concert.date }}
-              {% endif %}
-            {% endfor %}
-            {% if not ns.found %}
-          
-          &#128532; No upcoming concerts
-          
-          [Find shows](https://www.setlist.fm)
-            {% endif %}
+          &#128197; {{ states(entity) }}
+          [View setlist]({{ state_attr(entity, 'url') }})
           {% else %}
-          &#8987; Loading...
+          No upcoming setlist available, or integration unavailable.
           {% endif %}
 
       # Recent List (Compact)

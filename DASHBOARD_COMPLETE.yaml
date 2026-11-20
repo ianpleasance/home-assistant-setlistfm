@@ -1,6 +1,8 @@
 # Complete Setlist.fm Dashboard - Raw Configuration Editor
 # Copy ONLY the YAML below (starting with "views:")
-# Replace "ianpleasance" with your Setlist.fm username throughout
+# Replace every full entity ID with the actual ID in your entity settings.
+# IDs do not inherently start with setlistfm_; legacy references are placeholders.
+# Lists show only returned setlists after your display filter and limit.
 
 views:
   - title: My Concerts
@@ -24,7 +26,7 @@ views:
           
           - type: markdown
             content: |
-              ## &#9200; {{ relative_time(states('sensor.setlistfm_ianpleasance_last_update')) }}
+              ## &#9200; {{ relative_time(as_datetime(states('sensor.setlistfm_ianpleasance_last_update'))) if has_value('sensor.setlistfm_ianpleasance_last_update') else 'Unavailable' }}
               **Last Updated**
 
       # Upcoming Concerts Section

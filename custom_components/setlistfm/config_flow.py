@@ -1,15 +1,20 @@
 """Config flow for setlist.fm integration."""
-import logging
 from typing import Any
 
-import aiohttp
 import voluptuous as vol
 
 from homeassistant import config_entries
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.data_entry_flow import FlowResult
-from homeassistant.exceptions import HomeAssistantError
+from homeassistant.helpers.selector import TextSelector, TextSelectorConfig, TextSelectorType
 
+from .api import (
+    SetlistFmAuthError,
+    SetlistFmConnectionError,
+    SetlistFmRateLimitError,
+    SetlistFmResponseError,
+)
+from .client import async_create_client
 from .const import (
     DOMAIN,
     CONF_USERID,
@@ -26,42 +31,15 @@ from .const import (
     DATE_FORMATS,
     SHOW_CONCERTS_OPTIONS,
 )
-
-_LOGGER = logging.getLogger(__name__)
+from .helpers import normalize_username
 
 
 async def validate_input(hass: HomeAssistant, data: dict[str, Any]) -> dict[str, Any]:
-    """Validate the user input allows us to connect.
-    
-    Data has the keys from STEP_USER_DATA_SCHEMA with values provided by the user.
-    """
-    headers = {
-        "x-api-key": data[CONF_API_KEY],
-        "Accept": "application/json",
-    }
-    
-    user_url = f"https://api.setlist.fm/rest/1.0/user/{data[CONF_USERID]}"
-    
-    async with aiohttp.ClientSession() as session:
-        try:
-            async with session.get(user_url, headers=headers) as response:
-                if response.status == 401:
-                    raise InvalidAuth
-                elif response.status == 404:
-                    raise UserNotFound
-                elif response.status != 200:
-                    raise CannotConnect
-                
-                user_data = await response.json()
-                
-                # Extract the username from the API response
-                username = user_data.get("fullname") or user_data.get("userId") or data[CONF_USERID]
-                
-                return {"title": username, "user_data": user_data}
-        
-        except aiohttp.ClientError as err:
-            _LOGGER.error("Error connecting to setlist.fm: %s", err)
-            raise CannotConnect from err
+    """Check attendance access without claiming to prove username existence."""
+    userid = normalize_username(data[CONF_USERID])
+    client = async_create_client(hass, data[CONF_API_KEY], userid)
+    await client.async_validate_access()
+    return {"title": data.get(CONF_NAME) or userid}
 
 
 class SetlistFmConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
@@ -75,23 +53,34 @@ class SetlistFmConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         """Handle the initial step."""
         errors: dict[str, str] = {}
         
-        if user_input is not None:
+        if user_input is not None and not normalize_username(user_input[CONF_USERID]):
+            errors["base"] = "invalid_username"
+        elif user_input is not None:
+            user_input = {
+                **user_input,
+                CONF_USERID: normalize_username(user_input[CONF_USERID]),
+            }
+            await self.async_set_unique_id(user_input[CONF_USERID])
+            self._abort_if_unique_id_configured()
+
+            # Older entries may still have mixed-case usernames and unique IDs.
+            if any(
+                normalize_username(entry.data[CONF_USERID]) == user_input[CONF_USERID]
+                for entry in self._async_current_entries()
+            ):
+                return self.async_abort(reason="already_configured")
+
             try:
                 info = await validate_input(self.hass, user_input)
-            except CannotConnect:
+            except SetlistFmConnectionError:
                 errors["base"] = "cannot_connect"
-            except InvalidAuth:
+            except SetlistFmAuthError:
                 errors["base"] = "invalid_auth"
-            except UserNotFound:
-                errors["base"] = "user_not_found"
-            except Exception:  # pylint: disable=broad-except
-                _LOGGER.exception("Unexpected exception")
-                errors["base"] = "unknown"
+            except SetlistFmRateLimitError:
+                errors["base"] = "rate_limited"
+            except SetlistFmResponseError:
+                errors["base"] = "invalid_response"
             else:
-                # Set unique ID to prevent duplicate entries for same user
-                await self.async_set_unique_id(user_input[CONF_USERID])
-                self._abort_if_unique_id_configured()
-                
                 return self.async_create_entry(
                     title=info["title"],
                     data={
@@ -110,7 +99,9 @@ class SetlistFmConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         data_schema = vol.Schema(
             {
                 vol.Required(CONF_USERID): str,
-                vol.Required(CONF_API_KEY): str,
+                vol.Required(CONF_API_KEY): TextSelector(
+                    TextSelectorConfig(type=TextSelectorType.PASSWORD)
+                ),
                 vol.Optional(CONF_NAME): str,
             }
         )
@@ -118,6 +109,45 @@ class SetlistFmConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         return self.async_show_form(
             step_id="user",
             data_schema=data_schema,
+            errors=errors,
+        )
+
+    async def async_step_reauth(self, entry_data: dict[str, Any]) -> FlowResult:
+        """Replace credentials on the same config entry."""
+        return await self.async_step_reauth_confirm()
+
+    async def async_step_reauth_confirm(
+        self, user_input: dict[str, Any] | None = None
+    ) -> FlowResult:
+        entry = self._get_reauth_entry()
+        errors: dict[str, str] = {}
+        if user_input is not None:
+            try:
+                await validate_input(
+                    self.hass, {**entry.data, CONF_API_KEY: user_input[CONF_API_KEY]}
+                )
+            except SetlistFmConnectionError:
+                errors["base"] = "cannot_connect"
+            except SetlistFmAuthError:
+                errors["base"] = "invalid_auth"
+            except SetlistFmRateLimitError:
+                errors["base"] = "rate_limited"
+            except SetlistFmResponseError:
+                errors["base"] = "invalid_response"
+            else:
+                return self.async_update_reload_and_abort(
+                    entry, data_updates={CONF_API_KEY: user_input[CONF_API_KEY]}
+                )
+        return self.async_show_form(
+            step_id="reauth_confirm",
+            data_schema=vol.Schema(
+                {
+                    vol.Required(CONF_API_KEY): TextSelector(
+                        TextSelectorConfig(type=TextSelectorType.PASSWORD)
+                    )
+                }
+            ),
+            description_placeholders={"username": entry.data[CONF_USERID]},
             errors=errors,
         )
 
@@ -171,15 +201,3 @@ class SetlistFmOptionsFlowHandler(config_entries.OptionsFlow):
             step_id="init",
             data_schema=data_schema,
         )
-
-
-class CannotConnect(HomeAssistantError):
-    """Error to indicate we cannot connect."""
-
-
-class InvalidAuth(HomeAssistantError):
-    """Error to indicate there is invalid auth."""
-
-
-class UserNotFound(HomeAssistantError):
-    """Error to indicate the user was not found."""

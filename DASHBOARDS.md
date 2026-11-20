@@ -1,6 +1,20 @@
 # 🎸 Beautiful Dashboard Examples
 
+**Prefer no YAML?** The integration now bundles Complete, Compact, Deluxe and Mobile **individual cards** under **Add card > By cards > Community**. Select your account and options in the visual editor; see [CARDS.md](CARDS.md). The examples below are optional dashboard/view layouts, not the bundled cards, and some require other custom cards. Replace sample entity IDs with your actual IDs.
+
 Here are several dashboard card examples to display your Setlist.fm concerts in style!
+
+These are **optional YAML examples**, not required setup. For a no-YAML overview,
+add a standard Entities card using the visual editor and pick Concerts, Total
+concerts, Next concert, Last successful update and Refresh from your device.
+Mushroom examples additionally require the community Mushroom cards.
+
+Replace every **full entity ID** in these examples with your actual IDs from
+entity settings. The legacy `sensor.setlistfm_yourname_*` references are
+placeholders, not a guaranteed naming pattern. Next concert uses the full
+API-available dataset; the Concerts list remains display-filtered/capped. Unknown
+means no returned upcoming setlist, not no future bookings, and failed retrievals
+make sensors unavailable. No dashboard can reconstruct records the API did not return.
 
 ## 🎨 Complete Dashboard Layout
 
@@ -36,13 +50,15 @@ cards:
           action: none
       
       - type: custom:mushroom-template-card
-        primary: "{{ relative_time(states('sensor.setlistfm_yourname_last_update')) }}"
+        primary: "{{ relative_time(as_datetime(states('sensor.setlistfm_yourname_last_update'))) if has_value('sensor.setlistfm_yourname_last_update') else 'Unavailable' }}"
         secondary: Last Updated
         icon: mdi:clock-outline
         icon_color: blue
         tap_action:
           action: call-service
-          service: setlistfm.force_refresh_YOUR_ENTRY_ID
+          service: button.press
+          target:
+            entity_id: button.yourname_refresh
   
   # Upcoming Concerts Section
   - type: markdown
@@ -171,14 +187,14 @@ entities:
   - entity: sensor.setlistfm_yourname_concerts
     name: Concerts Shown
     icon: mdi:music-note-multiple
-  - type: attribute
-    entity: sensor.setlistfm_yourname_concerts
-    attribute: total_attended
-    name: Total Attended
+  - entity: sensor.yourname_total_concerts
+    name: Total Concerts
     icon: mdi:ticket-confirmation
+  - entity: sensor.yourname_next_concert
   - entity: sensor.setlistfm_yourname_last_update
     name: Last Updated
     icon: mdi:update
+  - entity: button.yourname_refresh
 ```
 
 ### 4. 🎯 Next Concert Countdown
@@ -187,29 +203,14 @@ entities:
 type: markdown
 title: 🎯 Next Concert
 content: |
-  {% set concerts = state_attr('sensor.setlistfm_yourname_concerts', 'concert_list') %}
-  {% if concerts %}
-    {% set lines = concerts.split('\n') %}
-    {% set upcoming = lines | select('search', 'Upcoming') | list %}
-    {% if upcoming | length > 0 %}
-  
-  ## 🎤 {{ upcoming[0].split(' at ')[0] }}
-  
-  📍 **{{ upcoming[0].split(' at ')[1].split(' on ')[0] }}**
-  
-  📅 **{{ upcoming[0].split(' on ')[1].replace('(Upcoming)', '').strip() }}**
-  
-  🎫 Get excited! Your next show is coming up!
-    {% else %}
-  
-  😔 **No upcoming concerts**
-  
-  🔍 Time to find your next show!
-  
-  💡 [Browse concerts on Setlist.fm](https://www.setlist.fm)
-    {% endif %}
+  {% set entity = 'sensor.yourname_next_concert' %}
+  {% if has_value(entity) %}
+  ## 🎤 {{ state_attr(entity, 'artist') }}
+  📍 **{{ state_attr(entity, 'venue') }}**
+  📅 **{{ states(entity) }}**
+  [View setlist]({{ state_attr(entity, 'url') }})
   {% else %}
-  ⏳ Loading...
+  No upcoming setlist is available, or the integration is unavailable.
   {% endif %}
 ```
 
@@ -297,46 +298,20 @@ cards:
     icon_color: blue
     tap_action:
       action: call-service
-      service: setlistfm.force_refresh_YOUR_ENTRY_ID
+      service: button.press
+      target:
+        entity_id: button.yourname_refresh
 ```
 
 ### Next Concert - Mushroom Style
 
 ```yaml
 type: custom:mushroom-template-card
-primary: |
-  {% set concerts = state_attr('sensor.setlistfm_yourname_concerts', 'concert_list') %}
-  {% if concerts %}
-    {% set upcoming = concerts.split('\n') | select('search', 'Upcoming') | list %}
-    {% if upcoming | length > 0 %}
-      {{ upcoming[0].split(' at ')[0] }}
-    {% else %}
-      No upcoming concerts
-    {% endif %}
-  {% else %}
-    Loading...
-  {% endif %}
-secondary: |
-  {% set concerts = state_attr('sensor.setlistfm_yourname_concerts', 'concert_list') %}
-  {% if concerts %}
-    {% set upcoming = concerts.split('\n') | select('search', 'Upcoming') | list %}
-    {% if upcoming | length > 0 %}
-      {{ upcoming[0].split(' on ')[1].replace('(Upcoming)', '').strip() }}
-    {% else %}
-      Find your next show!
-    {% endif %}
-  {% else %}
-    ...
-  {% endif %}
+primary: "{{ state_attr('sensor.yourname_next_concert', 'artist') or 'No upcoming setlist available' }}"
+secondary: "{{ states('sensor.yourname_next_concert') }}"
 icon: mdi:ticket
 icon_color: >
-  {% set concerts = state_attr('sensor.setlistfm_yourname_concerts', 'concert_list') %}
-  {% if concerts %}
-    {% set upcoming = concerts.split('\n') | select('search', 'Upcoming') | list %}
-    {{ 'green' if upcoming | length > 0 else 'grey' }}
-  {% else %}
-    grey
-  {% endif %}
+  {{ 'green' if has_value('sensor.yourname_next_concert') else 'grey' }}
 badge_icon: mdi:calendar-clock
 badge_color: purple
 tap_action:
@@ -380,7 +355,7 @@ content: |
     
   ---
   **Total Concerts:** {{ state_attr('sensor.setlistfm_yourname_concerts', 'total_attended') }} 🎫
-  **Last Updated:** {{ relative_time(states('sensor.setlistfm_yourname_last_update')) }} ⏰
+  **Last Updated:** {{ relative_time(as_datetime(states('sensor.setlistfm_yourname_last_update'))) if has_value('sensor.setlistfm_yourname_last_update') else 'Unavailable' }} ⏰
   {% else %}
   ⏳ Loading concert data...
   {% endif %}

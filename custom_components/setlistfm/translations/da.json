@@ -3,22 +3,35 @@
     "step": {
       "user": {
         "title": "Tilslut til Setlist.fm",
-        "description": "Indtast dit Setlist.fm bruger-ID og API-nøgle. Du kan finde dit bruger-ID i din profil-URL, og få en API-nøgle fra https://www.setlist.fm/settings/api",
+        "description": "Indtast dit Setlist.fm-brugernavn og din API-nøgle. Du kan få en API-nøgle fra https://www.setlist.fm/settings/api",
         "data": {
-          "userid": "Bruger-ID",
+          "userid": "Brugernavn",
           "api_key": "API-nøgle",
           "name": "Navn (valgfrit)"
+        },
+        "data_description": {
+          "userid": "Dit brugernavn er delen efter /user/ i din profil-URL og vises også øverst til højre ved siden af \"Add setlist\". Det konverteres automatisk til små bogstaver."
+        }
+      },
+      "reauth_confirm": {
+        "title": "Tilslut til Setlist.fm igen",
+        "description": "API-nøglen for {username} accepteres ikke længere. Indtast en ny nøgle for at tilslutte denne eksisterende konto igen.",
+        "data": {
+          "api_key": "API-nøgle"
         }
       }
     },
     "error": {
+      "invalid_username": "Indtast et brugernavn, der ikke er tomt eller kun består af mellemrum.",
       "cannot_connect": "Forbindelse til Setlist.fm mislykkedes. Tjek din internetforbindelse.",
       "invalid_auth": "Ugyldig API-nøgle. Tjek venligst din API-nøgle og prøv igen.",
-      "user_not_found": "Bruger ikke fundet. Tjek venligst dit bruger-ID.",
+      "rate_limited": "Setlist.fm begrænser antallet af forespørgsler. Vent, før du prøver igen.",
+      "invalid_response": "Setlist.fm returnerede et uventet eller ufuldstændigt svar. Prøv igen senere.",
       "unknown": "Uventet fejl opstod. Prøv venligst igen."
     },
     "abort": {
-      "already_configured": "Denne bruger er allerede konfigureret."
+      "already_configured": "Denne bruger er allerede konfigureret.",
+      "reauth_successful": "Godkendelsen blev fornyet."
     }
   },
   "options": {
@@ -31,18 +44,62 @@
           "number_of_concerts": "Antal koncerter der skal vises",
           "date_format": "Datoformat",
           "show_concerts": "Vis koncerter"
+        },
+        "data_description": {
+          "refresh_period": "Hvor ofte der skal søges efter nye koncerter (1-24 timer)",
+          "number_of_concerts": "Maksimalt antal individuelle optrædener og, separat, grupperede koncertbesøg, der vises (1-50); ændrer ikke det samlede antal besøg",
+          "date_format": "Format til visning af datoer",
+          "show_concerts": "Filtrer viste optrædener og grupperede besøg efter dato; ændrer ikke det samlede antal besøg"
         }
       }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "concerts": {
+        "name": "Viste koncerter"
+      },
+      "total_concerts": {
+        "name": "Koncerter i alt"
+      },
+      "unique_concert_visits": {
+        "name": "Unikke koncertbesøg"
+      },
+      "next_concert": {
+        "name": "Næste koncert"
+      },
+      "last_update": {
+        "name": "Seneste vellykkede opdatering"
+      }
+    },
+    "button": {
+      "refresh": {
+        "name": "Opdater"
+      }
+    }
+  },
+  "exceptions": {
+    "invalid_entry": {
+      "message": "Konfigurationsposten {entry_id} er ikke en indlæst setlist.fm-post."
+    },
+    "no_loaded_entries": {
+      "message": "Ingen setlist.fm-poster er indlæst. Tjek integrationens opsætning."
+    },
+    "entry_unloaded": {
+      "message": "Denne setlist.fm-post blev fjernet fra hukommelsen, før opdateringen var færdig."
+    },
+    "refresh_failed": {
+      "message": "Kunne ikke opdatere {entries}: {error}"
     }
   },
   "services": {
     "refresh": {
       "name": "Opdater",
-      "description": "Tving en dataopdatering for en eller alle setlist.fm-konfigurationsposter.",
+      "description": "Tving en dataopdatering for en eller alle indlæste setlist.fm-konfigurationsposter.",
       "fields": {
         "entry_id": {
           "name": "Post-ID",
-          "description": "Konfigurationspost-ID'et der skal opdateres. Hvis udeladt, opdateres alle poster."
+          "description": "Konfigurationspost-ID'et der skal opdateres. Hvis udeladt, opdateres alle indlæste poster. En udtrykkeligt angivet post skal være en indlæst setlist.fm-post."
         }
       }
     }

@@ -3,22 +3,35 @@
     "step": {
       "user": {
         "title": "Connect to Setlist.fm",
-        "description": "Enter your Setlist.fm user ID and API key. You can find your user ID in your profile URL, and get an API key from https://www.setlist.fm/settings/api",
+        "description": "Enter your Setlist.fm username and API key. Get an API key from https://www.setlist.fm/settings/api",
         "data": {
-          "userid": "User ID",
+          "userid": "Username",
           "api_key": "API Key",
           "name": "Name (optional)"
+        },
+        "data_description": {
+          "userid": "Your username is the part after /user/ in your profile URL, also shown at the top right next to \"Add setlist\". It is automatically converted to lowercase."
+        }
+      },
+      "reauth_confirm": {
+        "title": "Reconnect to Setlist.fm",
+        "description": "The API key for {username} is no longer accepted. Enter a replacement key to reconnect this existing account.",
+        "data": {
+          "api_key": "API Key"
         }
       }
     },
     "error": {
+      "invalid_username": "Enter a username that is not empty or only whitespace.",
       "cannot_connect": "Failed to connect to Setlist.fm. Please check your internet connection.",
       "invalid_auth": "Invalid API key. Please check your API key and try again.",
-      "user_not_found": "User not found. Please check your User ID.",
+      "rate_limited": "Setlist.fm is limiting requests. Wait before trying again.",
+      "invalid_response": "Setlist.fm returned an unexpected or incomplete response. Please try again later.",
       "unknown": "Unexpected error occurred. Please try again."
     },
     "abort": {
-      "already_configured": "This user is already configured."
+      "already_configured": "This user is already configured.",
+      "reauth_successful": "Reauthentication was successful."
     }
   },
   "options": {
@@ -34,21 +47,59 @@
         },
         "data_description": {
           "refresh_period": "How often to check for new concerts (1-24 hours)",
-          "number_of_concerts": "Maximum number of concerts to display (1-50)",
+          "number_of_concerts": "Maximum individual performances and, separately, grouped concert visits to display (1-50); does not change the total visit count",
           "date_format": "Format for displaying dates",
-          "show_concerts": "Filter which concerts to display"
+          "show_concerts": "Filter displayed performances and grouped visits by date; does not change the total visit count"
         }
       }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "concerts": {
+        "name": "Concerts shown"
+      },
+      "total_concerts": {
+        "name": "Total concerts"
+      },
+      "unique_concert_visits": {
+        "name": "Unique concert visits"
+      },
+      "next_concert": {
+        "name": "Next concert"
+      },
+      "last_update": {
+        "name": "Last successful update"
+      }
+    },
+    "button": {
+      "refresh": {
+        "name": "Refresh"
+      }
+    }
+  },
+  "exceptions": {
+    "invalid_entry": {
+      "message": "Config entry {entry_id} is not a loaded setlist.fm entry."
+    },
+    "no_loaded_entries": {
+      "message": "No setlist.fm entries are loaded. Check the integration setup."
+    },
+    "entry_unloaded": {
+      "message": "This setlist.fm entry was unloaded before the refresh completed."
+    },
+    "refresh_failed": {
+      "message": "Could not refresh {entries}: {error}"
     }
   },
   "services": {
     "refresh": {
       "name": "Refresh",
-      "description": "Force a data refresh for one or all setlist.fm config entries.",
+      "description": "Force a data refresh for one or all loaded setlist.fm config entries.",
       "fields": {
         "entry_id": {
           "name": "Entry ID",
-          "description": "The config entry ID to refresh. If omitted, all entries are refreshed."
+          "description": "The config entry ID to refresh. If omitted, all loaded entries are refreshed. An explicit target must be a loaded setlist.fm entry."
         }
       }
     }

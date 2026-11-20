@@ -1,0 +1,60 @@
+name: Frontend
+
+on:
+  pull_request:
+  push:
+
+permissions:
+  contents: read
+
+jobs:
+  browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      matrix:
+        include:
+          - python: "3.13"
+            requirements: requirements-test-min.txt
+            name: minimum
+          - python: "3.14"
+            requirements: requirements-test.txt
+            name: latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: "22"
+          cache: npm
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
+        with:
+          python-version: ${{ matrix.python }}
+          cache: pip
+          cache-dependency-path: ${{ matrix.requirements }}
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: python -m pip install -r ${{ matrix.requirements }}
+      - run: npm test
+      - name: Real Home Assistant picker, editor and saved card
+        env:
+          SETLISTFM_LIVE_DIR: ${{ runner.temp }}/setlistfm-live
+        run: |
+          mkdir -p "$SETLISTFM_LIVE_DIR"
+          python -m pytest tests/test_live_frontend.py -q >"$SETLISTFM_LIVE_DIR/host.log" 2>&1 &
+          host_pid=$!
+          trap 'kill "$host_pid" 2>/dev/null || true' EXIT
+          status=0
+          npm run test:ha || status=$?
+          wait "$host_pid" || status=$?
+          trap - EXIT
+          cat "$SETLISTFM_LIVE_DIR/host.log"
+          exit "$status"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        if: always()
+        with:
+          name: frontend-screenshots-${{ matrix.name }}
+          retention-days: 7
+          path: |
+            test-results/**/*.png
+            ${{ runner.temp }}/setlistfm-live/*.png
+            ${{ runner.temp }}/setlistfm-live/live-result.json

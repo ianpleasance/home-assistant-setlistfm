@@ -8,17 +8,30 @@
           "userid": "Käyttäjätunnus",
           "api_key": "API-avain",
           "name": "Nimi (valinnainen)"
+        },
+        "data_description": {
+          "userid": "Käyttäjätunnuksesi on profiilin URL-osoitteessa /user/-osan jälkeen, ja se näkyy myös oikeassa yläkulmassa \"Add setlist\" -painikkeen vieressä. Se muunnetaan automaattisesti pieniksi kirjaimiksi."
+        }
+      },
+      "reauth_confirm": {
+        "title": "Yhdistä uudelleen Setlist.fm-palveluun",
+        "description": "Käyttäjän {username} API-avainta ei enää hyväksytä. Anna uusi avain yhdistääksesi tämän olemassa olevan tilin uudelleen.",
+        "data": {
+          "api_key": "API-avain"
         }
       }
     },
     "error": {
+      "invalid_username": "Anna käyttäjätunnus, joka ei ole tyhjä eikä sisällä pelkkiä välilyöntejä.",
       "cannot_connect": "Yhteys Setlist.fm-palveluun epäonnistui. Tarkista internetyhteytesi.",
       "invalid_auth": "Virheellinen API-avain. Tarkista API-avaimesi ja yritä uudelleen.",
-      "user_not_found": "Käyttäjää ei löydy. Tarkista käyttäjätunnuksesi.",
+      "rate_limited": "Setlist.fm rajoittaa pyyntöjen määrää. Odota ennen kuin yrität uudelleen.",
+      "invalid_response": "Setlist.fm palautti odottamattoman tai puutteellisen vastauksen. Yritä myöhemmin uudelleen.",
       "unknown": "Odottamaton virhe tapahtui. Yritä uudelleen."
     },
     "abort": {
-      "already_configured": "Tämä käyttäjä on jo määritetty."
+      "already_configured": "Tämä käyttäjä on jo määritetty.",
+      "reauth_successful": "Uudelleentodennus onnistui."
     }
   },
   "options": {
@@ -31,18 +44,62 @@
           "number_of_concerts": "Näytettävien konserttien määrä",
           "date_format": "Päivämäärämuoto",
           "show_concerts": "Näytä konsertit"
+        },
+        "data_description": {
+          "refresh_period": "Kuinka usein uusia konsertteja haetaan (1-24 tuntia)",
+          "number_of_concerts": "Näytettävien yksittäisten esiintymisten ja erikseen ryhmiteltyjen konserttikäyntien enimmäismäärä (1-50); ei muuta käyntien kokonaismäärää",
+          "date_format": "Päivämäärien näyttömuoto",
+          "show_concerts": "Suodata näytettäviä esiintymisiä ja ryhmiteltyjä käyntejä päivämäärän mukaan; ei muuta käyntien kokonaismäärää"
         }
       }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "concerts": {
+        "name": "Näytetyt konsertit"
+      },
+      "total_concerts": {
+        "name": "Konsertteja yhteensä"
+      },
+      "unique_concert_visits": {
+        "name": "Yksilölliset konserttikäynnit"
+      },
+      "next_concert": {
+        "name": "Seuraava konsertti"
+      },
+      "last_update": {
+        "name": "Viimeisin onnistunut päivitys"
+      }
+    },
+    "button": {
+      "refresh": {
+        "name": "Päivitä"
+      }
+    }
+  },
+  "exceptions": {
+    "invalid_entry": {
+      "message": "Konfiguraatiomerkintä {entry_id} ei ole ladattu setlist.fm-merkintä."
+    },
+    "no_loaded_entries": {
+      "message": "Yhtään setlist.fm-merkintää ei ole ladattu. Tarkista integraation asetukset."
+    },
+    "entry_unloaded": {
+      "message": "Tämä setlist.fm-merkintä poistettiin muistista ennen päivityksen valmistumista."
+    },
+    "refresh_failed": {
+      "message": "Kohteiden {entries} päivitys epäonnistui: {error}"
     }
   },
   "services": {
     "refresh": {
       "name": "Päivitä",
-      "description": "Pakota tietojen päivitys yhdelle tai kaikille setlist.fm-konfiguraatiomerkinnöille.",
+      "description": "Pakota tietojen päivitys yhdelle tai kaikille ladatuille setlist.fm-konfiguraatiomerkinnöille.",
       "fields": {
         "entry_id": {
           "name": "Merkinnän tunnus",
-          "description": "Päivitettävän konfiguraatiomerkinnän tunnus. Jos jätetty tyhjäksi, kaikki merkinnät päivitetään."
+          "description": "Päivitettävän konfiguraatiomerkinnän tunnus. Jos tunnus jätetään pois, kaikki ladatut merkinnät päivitetään. Erikseen määritetyn kohteen on oltava ladattu setlist.fm-merkintä."
         }
       }
     }

@@ -1,6 +1,9 @@
 # Deluxe Setlist.fm Dashboard - Full Featured
 # Copy ONLY the YAML below (starting with "views:")
-# Replace "ianpleasance" with your Setlist.fm username
+# Replace every full entity ID with the actual ID in your entity settings.
+# IDs do not inherently start with setlistfm_; legacy references are placeholders.
+# Lists are display-filtered; Next concert uses all API-available setlists.
+# Also replace the example profile URL with your own.
 
 views:
   - title: Concert Tracker
@@ -12,7 +15,7 @@ views:
       - type: markdown
         content: |
           # &#127928; My Concert Journey
-          ### Your complete setlist.fm history
+          ### Your available setlist.fm concerts
 
       # Big Stats Row
       - type: horizontal-stack
@@ -44,49 +47,20 @@ views:
         content: |
           ## &#11088; Featured: Your Next Show
           
-          {% set concerts = state_attr('sensor.setlistfm_ianpleasance_concerts', 'concerts') %}
-          {% if concerts %}
-            {% set ns = namespace(found=false) %}
-            {% for concert in concerts if not ns.found %}
-              {% set date_parts = concert.date.split('-') %}
-              {% set concert_date = date_parts[2] ~ '-' ~ date_parts[1] ~ '-' ~ date_parts[0] %}
-              {% set today = now().strftime('%Y-%m-%d') %}
-              {% if concert_date >= today %}
-                {% set ns.found = true %}
+          {% set entity = 'sensor.yourname_next_concert' %}
+          {% if has_value(entity) %}
           
-          # &#127908; {{ concert.artist.name }}
+          # &#127908; {{ state_attr(entity, 'artist') }}
           
           ### &#128205; Venue
-          **{{ concert.venue.name }}**
-          {{ concert.venue.city }}, {{ concert.venue.state }}
-          {{ concert.venue.country }}
+          **{{ state_attr(entity, 'venue') }}**
           
           ### &#128197; Date
-          **{{ concert.date }}**
+          **{{ states(entity) }}**
           
-          {% if concert.song_count > 0 %}
-          ### &#127925; Expected Songs
-          Based on recent shows: **~{{ concert.song_count }}** songs
-          {% endif %}
-          
-          [&#128279; View on Setlist.fm]({{ concert.url }})
-          
-          ---
-              {% endif %}
-            {% endfor %}
-            {% if not ns.found %}
-          
-          ## &#128532; No upcoming concerts scheduled
-          
-          ### &#128269; Find Your Next Show
-          Browse concerts and add them to your attended list on Setlist.fm
-          
-          [&#127915; Browse Concerts](https://www.setlist.fm)
-          
-          ---
-            {% endif %}
+          [&#128279; View on Setlist.fm]({{ state_attr(entity, 'url') }})
           {% else %}
-          &#8987; Loading...
+          No upcoming setlist available, or integration unavailable.
           {% endif %}
 
       # All Upcoming Concerts

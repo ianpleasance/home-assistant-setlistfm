@@ -1,6 +1,8 @@
 # Mobile-Optimized Setlist.fm Dashboard
 # Copy ONLY the YAML below (starting with "views:")
-# Replace "ianpleasance" with your Setlist.fm username
+# Replace every full entity ID with the actual ID in your entity settings.
+# IDs do not inherently start with setlistfm_; legacy references are placeholders.
+# Lists are display-filtered; Next concert uses all API-available setlists.
 
 views:
   - title: My Concerts
@@ -19,7 +21,7 @@ views:
           ## &#127925; {{ states('sensor.setlistfm_ianpleasance_concerts') }}
           Concerts Shown
           
-          ## &#9200; {{ relative_time(states('sensor.setlistfm_ianpleasance_last_update')) }}
+          ## &#9200; {{ relative_time(as_datetime(states('sensor.setlistfm_ianpleasance_last_update'))) if has_value('sensor.setlistfm_ianpleasance_last_update') else 'Unavailable' }}
           Last Updated
 
       # Next Concert (Mobile Friendly)
@@ -29,27 +31,17 @@ views:
           
           ## &#127908; NEXT CONCERT
           
-          {% set concerts = state_attr('sensor.setlistfm_ianpleasance_concerts', 'concerts') %}
-          {% if concerts %}
-            {% set ns = namespace(found=false) %}
-            {% for concert in concerts if not ns.found %}
-              {% set date_parts = concert.date.split('-') %}
-              {% set concert_date = date_parts[2] ~ '-' ~ date_parts[1] ~ '-' ~ date_parts[0] %}
-              {% set today = now().strftime('%Y-%m-%d') %}
-              {% if concert_date >= today %}
-                {% set ns.found = true %}
+          {% set entity = 'sensor.yourname_next_concert' %}
+          {% if has_value(entity) %}
           
-          ### {{ concert.artist.name }}
+          ### {{ state_attr(entity, 'artist') }}
           
-          **WHERE:** {{ concert.venue.name }}, {{ concert.venue.city }}
+          **WHERE:** {{ state_attr(entity, 'venue') }}
           
-          **WHEN:** {{ concert.date }}
-              {% endif %}
-            {% endfor %}
-            {% if not ns.found %}
-          
-          No upcoming concerts
-            {% endif %}
+          **WHEN:** {{ states(entity) }}
+          [View setlist]({{ state_attr(entity, 'url') }})
+          {% else %}
+          No upcoming setlist available, or integration unavailable.
           {% endif %}
 
       # Upcoming List (Mobile)

@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>setlist.fm card fixtures</title>
+  <style>
+    :root {
+      --primary-text-color:#212121; --secondary-text-color:#60666b; --primary-color:#007c91;
+      --card-background-color:#fff; --secondary-background-color:#f2f6f7; --divider-color:#dfe5e7;
+      --warning-color:#a66400; --ha-font-family-body:system-ui, sans-serif;
+      font-family:system-ui, sans-serif; background:#eef2f4; color:var(--primary-text-color);
+    }
+    :root.dark {
+      --primary-text-color:#e6edf0; --secondary-text-color:#aebcc4; --primary-color:#6fd5df;
+      --card-background-color:#1d252a; --secondary-background-color:#242f35; --divider-color:#3b474f;
+      --warning-color:#ffc875; background:#12191d;
+    }
+    body { margin:0; padding:24px; }
+    main { max-width:860px; margin:auto; }
+    .fixture-label { font-size:12px; color:var(--secondary-text-color); margin:0 0 16px; }
+    @media(max-width:400px) { body { padding:12px; } }
+  </style>
+</head>
+<body>
+  <main>
+    <p class="fixture-label">Local fixture / Home Assistant theme variables / not the HA card picker</p>
+    <div id="mount"></div>
+  </main>
+  <script>
+    if (new URLSearchParams(location.search).get("bootstrap") === "delayed") {
+      const nativeRegistry = customElements;
+      window.oldRegistryResolved = false;
+      nativeRegistry.whenDefined("ha-card").then(() => { window.oldRegistryResolved = true; });
+      window.finishBootstrap = () => {
+        const definitions = new Map();
+        Object.defineProperty(window, "customElements", { configurable:true, value:{
+          define(name, constructor, options) {
+            // Deliberately do not resolve the old registry's ha-card promise.
+            if (name !== "ha-card") nativeRegistry.define(name, constructor, options);
+            definitions.set(name, constructor);
+          },
+          get(name) { return definitions.get(name); },
+          whenDefined(name) { return nativeRegistry.whenDefined(name); },
+        }});
+        customElements.define("ha-card", class extends HTMLElement {});
+      };
+    } else {
+      customElements.define("ha-card", class extends HTMLElement {});
+    }
+  </script>
+  <script type="module">
+    import * as helpers from "/setlistfm-cards.js";
+    window.helpers = helpers;
+    const concert = (id, date, artist, venue, city) => ({
+      id, date, artist:{name:artist,mbid:"example"}, venue:{name:venue,city,state:"",country:"Netherlands"},
+      song_count:19, url:`https://www.setlist.fm/setlist/example/${id}.html`,
+    });
+    window.fixtureHass = () => ({
+      config:{time_zone:"Europe/Amsterdam"}, language:"en", locale:{language:"en"},
+      states:{
+        "sensor.living_room_temperature":{state:"21", attributes:{friendly_name:"Temperature"}},
+        "sensor.renamed_alex_shows":{state:"5",attributes:{
+          friendly_name:"Alex's concerts", attribution:"Data provided by setlist.fm (https://www.setlist.fm)",
+          concert_list:"Legacy display string", last_update_success:true, last_updated:"2026-09-29T20:12:00Z",
+          concerts:[
+            concert("a", "18-10-2026", "Khruangbin", "AFAS Live", "Amsterdam"),
+            concert("b", "03-10-2026", "Little Simz", "TivoliVredenburg", "Utrecht"),
+            concert("c", "30-09-2026", "The War on Drugs", "Paradiso", "Amsterdam"),
+            concert("d", "27-09-2026", "Nala Sinephro", "BIMHUIS", "Amsterdam"),
+            concert("e", "29-09-2026", "Fontaines D.C.", "Rotterdam Ahoy", "Rotterdam"),
+          ],
+        }},
+        "sensor.sam_gigs":{state:"0",attributes:{friendly_name:"SAM Concerts",concerts:[],concert_list:""}},
+      },
+    });
+    window.groupedHass = () => {
+      const hass = window.fixtureHass();
+      const attributes = hass.states["sensor.renamed_alex_shows"].attributes;
+      const performance = (id, name) => ({
+        id, artist:{name,mbid:null}, song_count:12, url:`https://www.setlist.fm/setlist/${id}.html`,
+      });
+      attributes.grouping_complete = true;
+      attributes.concert_visits = [
+        {date:"30-09-2026", venue:{id:"paradiso",name:"Paradiso",city:"Amsterdam",state:"",country:"Netherlands"},
+          performances:[performance("bloodywood", "Bloodywood"),performance("support", "Support Band")],
+          performance_count:2,omitted_performance_count:0,grouping_complete:true},
+        {date:"29-09-2026", venue:{id:"ahoy",name:"Rotterdam Ahoy",city:"Rotterdam",state:"",country:"Netherlands"},
+          performances:[performance("recent", "Recent Band")],performance_count:1,omitted_performance_count:0,grouping_complete:true},
+        {date:"18-10-2026", venue:{id:"afas",name:"AFAS Live",city:"Amsterdam",state:"",country:"Netherlands"},
+          performances:[performance("future", "Future Band")],performance_count:1,omitted_performance_count:0,grouping_complete:true},
+      ];
+      return hass;
+    };
+    window.mountCard = (preset = "complete", config = {}, hass = window.fixtureHass()) => {
+      const card = document.createElement(`setlistfm-${preset}-card`);
+      card.setConfig({type:`custom:setlistfm-${preset}-card`,entity:"sensor.renamed_alex_shows",...config});
+      if (hass) card.hass = hass;
+      document.querySelector("#mount").replaceChildren(card);
+      window.card = card;
+      return card;
+    };
+    window.mountEditor = (config = {}) => {
+      const editor = document.createElement("setlistfm-card-editor");
+      editor.hass = window.fixtureHass();
+      editor.setConfig({type:"custom:setlistfm-complete-card",entity:"sensor.renamed_alex_shows",...config});
+      editor.addEventListener("config-changed", (event) => {
+        window.lastChange = {config:event.detail.config,bubbles:event.bubbles,composed:event.composed};
+        editor.setConfig(event.detail.config);
+      });
+      document.querySelector("#mount").replaceChildren(editor);
+      window.editor = editor;
+      return editor;
+    };
+    window.ready = true;
+  </script>
+</body>
+</html>

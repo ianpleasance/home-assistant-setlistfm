@@ -3,22 +3,35 @@
     "step": {
       "user": {
         "title": "Conectar ao Setlist.fm",
-        "description": "Insira o seu ID de utilizador Setlist.fm e chave API. Pode encontrar o seu ID de utilizador no URL do seu perfil e obter uma chave API em https://www.setlist.fm/settings/api",
+        "description": "Insira o seu nome de utilizador Setlist.fm e chave API. Pode obter uma chave API em https://www.setlist.fm/settings/api",
         "data": {
-          "userid": "ID de utilizador",
+          "userid": "Nome de utilizador",
           "api_key": "Chave API",
           "name": "Nome (opcional)"
+        },
+        "data_description": {
+          "userid": "O seu nome de utilizador é a parte após /user/ no URL do perfil e também aparece no canto superior direito junto a \"Add setlist\". É convertido automaticamente para minúsculas."
+        }
+      },
+      "reauth_confirm": {
+        "title": "Voltar a ligar ao Setlist.fm",
+        "description": "A chave API de {username} já não é aceite. Introduza uma nova chave para voltar a ligar esta conta existente.",
+        "data": {
+          "api_key": "Chave API"
         }
       }
     },
     "error": {
+      "invalid_username": "Introduza um nome de utilizador que não esteja vazio nem contenha apenas espaços em branco.",
       "cannot_connect": "Falha ao ligar ao Setlist.fm. Verifique a sua ligação à internet.",
       "invalid_auth": "Chave API inválida. Verifique a sua chave API e tente novamente.",
-      "user_not_found": "Utilizador não encontrado. Verifique o seu ID de utilizador.",
+      "rate_limited": "O Setlist.fm está a limitar os pedidos. Aguarde antes de tentar novamente.",
+      "invalid_response": "O Setlist.fm devolveu uma resposta inesperada ou incompleta. Tente novamente mais tarde.",
       "unknown": "Ocorreu um erro inesperado. Por favor, tente novamente."
     },
     "abort": {
-      "already_configured": "Este utilizador já está configurado."
+      "already_configured": "Este utilizador já está configurado.",
+      "reauth_successful": "A nova autenticação foi concluída com êxito."
     }
   },
   "options": {
@@ -31,18 +44,62 @@
           "number_of_concerts": "Número de concertos a apresentar",
           "date_format": "Formato de data",
           "show_concerts": "Mostrar concertos"
+        },
+        "data_description": {
+          "refresh_period": "Frequência de procura de novos concertos (1-24 horas)",
+          "number_of_concerts": "Número máximo de atuações individuais e, separadamente, de visitas agrupadas a concertos a apresentar (1-50); não altera o total de visitas",
+          "date_format": "Formato de apresentação das datas",
+          "show_concerts": "Filtrar por data as atuações e visitas agrupadas apresentadas; não altera o total de visitas"
         }
       }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "concerts": {
+        "name": "Concertos apresentados"
+      },
+      "total_concerts": {
+        "name": "Total de concertos"
+      },
+      "unique_concert_visits": {
+        "name": "Visitas únicas a concertos"
+      },
+      "next_concert": {
+        "name": "Próximo concerto"
+      },
+      "last_update": {
+        "name": "Última atualização bem-sucedida"
+      }
+    },
+    "button": {
+      "refresh": {
+        "name": "Atualizar"
+      }
+    }
+  },
+  "exceptions": {
+    "invalid_entry": {
+      "message": "A entrada de configuração {entry_id} não é uma entrada carregada do setlist.fm."
+    },
+    "no_loaded_entries": {
+      "message": "Não há entradas do setlist.fm carregadas. Verifique a configuração da integração."
+    },
+    "entry_unloaded": {
+      "message": "Esta entrada do setlist.fm foi removida da memória antes de a atualização terminar."
+    },
+    "refresh_failed": {
+      "message": "Não foi possível atualizar {entries}: {error}"
     }
   },
   "services": {
     "refresh": {
       "name": "Atualizar",
-      "description": "Forçar uma atualização de dados para uma ou todas as entradas de configuração do setlist.fm.",
+      "description": "Forçar uma atualização de dados para uma ou todas as entradas de configuração carregadas do setlist.fm.",
       "fields": {
         "entry_id": {
           "name": "ID de entrada",
-          "description": "O ID de entrada de configuração a atualizar. Se omitido, todas as entradas são atualizadas."
+          "description": "O ID da entrada de configuração a atualizar. Se omitido, todas as entradas carregadas são atualizadas. Uma entrada indicada explicitamente tem de ser uma entrada carregada do setlist.fm."
         }
       }
     }

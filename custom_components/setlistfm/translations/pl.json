@@ -3,22 +3,35 @@
     "step": {
       "user": {
         "title": "Połącz z Setlist.fm",
-        "description": "Wprowadź swój identyfikator użytkownika Setlist.fm i klucz API. Identyfikator użytkownika znajdziesz w adresie URL swojego profilu; klucz API możesz uzyskać pod adresem https://www.setlist.fm/settings/api",
+        "description": "Wprowadź swoją nazwę użytkownika Setlist.fm i klucz API. Klucz API możesz uzyskać pod adresem https://www.setlist.fm/settings/api",
         "data": {
-          "userid": "Identyfikator użytkownika",
+          "userid": "Nazwa użytkownika",
           "api_key": "Klucz API",
           "name": "Nazwa (opcjonalne)"
+        },
+        "data_description": {
+          "userid": "Nazwa użytkownika to część po /user/ w adresie URL profilu. Jest też widoczna w prawym górnym rogu obok \"Add setlist\". Jest automatycznie zamieniana na małe litery."
+        }
+      },
+      "reauth_confirm": {
+        "title": "Połącz ponownie z Setlist.fm",
+        "description": "Klucz API użytkownika {username} nie jest już akceptowany. Wprowadź nowy klucz, aby ponownie połączyć to istniejące konto.",
+        "data": {
+          "api_key": "Klucz API"
         }
       }
     },
     "error": {
+      "invalid_username": "Wpisz nazwę użytkownika, która nie jest pusta ani nie składa się wyłącznie z białych znaków.",
       "cannot_connect": "Nie można połączyć się z Setlist.fm. Sprawdź połączenie internetowe.",
       "invalid_auth": "Nieprawidłowy klucz API. Sprawdź klucz API i spróbuj ponownie.",
-      "user_not_found": "Użytkownik nie znaleziony. Sprawdź swój identyfikator użytkownika.",
+      "rate_limited": "Setlist.fm ogranicza liczbę żądań. Poczekaj przed ponowną próbą.",
+      "invalid_response": "Setlist.fm zwrócił nieoczekiwaną lub niekompletną odpowiedź. Spróbuj ponownie później.",
       "unknown": "Wystąpił nieoczekiwany błąd. Spróbuj ponownie."
     },
     "abort": {
-      "already_configured": "Ten użytkownik jest już skonfigurowany."
+      "already_configured": "Ten użytkownik jest już skonfigurowany.",
+      "reauth_successful": "Ponowne uwierzytelnienie zakończyło się pomyślnie."
     }
   },
   "options": {
@@ -31,18 +44,62 @@
           "number_of_concerts": "Liczba koncertów do wyświetlenia",
           "date_format": "Format daty",
           "show_concerts": "Pokaż koncerty"
+        },
+        "data_description": {
+          "refresh_period": "Jak często sprawdzać nowe koncerty (1-24 godziny)",
+          "number_of_concerts": "Maksymalna liczba wyświetlanych pojedynczych występów i, osobno, zgrupowanych wizyt na koncertach (1-50); nie zmienia łącznej liczby wizyt",
+          "date_format": "Format wyświetlania dat",
+          "show_concerts": "Filtruj wyświetlane występy i zgrupowane wizyty według daty; nie zmienia łącznej liczby wizyt"
         }
       }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "concerts": {
+        "name": "Wyświetlane koncerty"
+      },
+      "total_concerts": {
+        "name": "Łączna liczba koncertów"
+      },
+      "unique_concert_visits": {
+        "name": "Unikalne wizyty na koncertach"
+      },
+      "next_concert": {
+        "name": "Następny koncert"
+      },
+      "last_update": {
+        "name": "Ostatnia udana aktualizacja"
+      }
+    },
+    "button": {
+      "refresh": {
+        "name": "Odśwież"
+      }
+    }
+  },
+  "exceptions": {
+    "invalid_entry": {
+      "message": "Wpis konfiguracji {entry_id} nie jest załadowanym wpisem setlist.fm."
+    },
+    "no_loaded_entries": {
+      "message": "Nie załadowano żadnych wpisów setlist.fm. Sprawdź konfigurację integracji."
+    },
+    "entry_unloaded": {
+      "message": "Ten wpis setlist.fm został usunięty z pamięci przed zakończeniem odświeżania."
+    },
+    "refresh_failed": {
+      "message": "Nie udało się odświeżyć {entries}: {error}"
     }
   },
   "services": {
     "refresh": {
       "name": "Odśwież",
-      "description": "Wymuś odświeżenie danych dla jednego lub wszystkich wpisów konfiguracji setlist.fm.",
+      "description": "Wymuś odświeżenie danych dla jednego lub wszystkich załadowanych wpisów konfiguracji setlist.fm.",
       "fields": {
         "entry_id": {
           "name": "ID wpisu",
-          "description": "ID wpisu konfiguracji do odświeżenia. Jeśli pominięto, odświeżane są wszystkie wpisy."
+          "description": "ID wpisu konfiguracji do odświeżenia. Jeśli pominięto, odświeżane są wszystkie załadowane wpisy. Jawnie wskazany wpis musi być załadowanym wpisem setlist.fm."
         }
       }
     }

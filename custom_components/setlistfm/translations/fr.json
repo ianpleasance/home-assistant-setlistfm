@@ -8,17 +8,30 @@
           "api_key": "Clé API",
           "userid": "Nom d'utilisateur",
           "name": "Nom (optionnel)"
+        },
+        "data_description": {
+          "userid": "Votre nom d'utilisateur est la partie après /user/ dans l'URL de votre profil, également affichée en haut à droite à côté de \"Add setlist\". Il est automatiquement converti en minuscules."
+        }
+      },
+      "reauth_confirm": {
+        "title": "Se reconnecter à Setlist.fm",
+        "description": "La clé API de {username} n'est plus acceptée. Saisissez une nouvelle clé pour reconnecter ce compte existant.",
+        "data": {
+          "api_key": "Clé API"
         }
       }
     },
     "error": {
+      "invalid_username": "Saisissez un nom d'utilisateur qui n'est pas vide et ne contient pas uniquement des espaces.",
       "cannot_connect": "Échec de la connexion",
       "invalid_auth": "Authentification invalide",
-      "user_not_found": "Utilisateur introuvable. Veuillez vérifier votre identifiant.",
+      "rate_limited": "Setlist.fm limite les requêtes. Patientez avant de réessayer.",
+      "invalid_response": "Setlist.fm a renvoyé une réponse inattendue ou incomplète. Veuillez réessayer plus tard.",
       "unknown": "Erreur inattendue"
     },
     "abort": {
-      "already_configured": "Cet utilisateur est déjà configuré"
+      "already_configured": "Cet utilisateur est déjà configuré",
+      "reauth_successful": "La réauthentification a réussi."
     }
   },
   "options": {
@@ -31,18 +44,62 @@
           "number_of_concerts": "Nombre de concerts",
           "show_concerts": "Afficher les concerts",
           "date_format": "Format de date"
+        },
+        "data_description": {
+          "refresh_period": "Fréquence de recherche de nouveaux concerts (1-24 heures)",
+          "number_of_concerts": "Nombre maximal de prestations individuelles et, séparément, de visites regroupées à des concerts à afficher (1-50) ; ne modifie pas le total des visites",
+          "date_format": "Format d'affichage des dates",
+          "show_concerts": "Filtrer les prestations et visites regroupées affichées par date ; ne modifie pas le total des visites"
         }
       }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "concerts": {
+        "name": "Concerts affichés"
+      },
+      "total_concerts": {
+        "name": "Nombre total de concerts"
+      },
+      "unique_concert_visits": {
+        "name": "Visites uniques à des concerts"
+      },
+      "next_concert": {
+        "name": "Prochain concert"
+      },
+      "last_update": {
+        "name": "Dernière mise à jour réussie"
+      }
+    },
+    "button": {
+      "refresh": {
+        "name": "Actualiser"
+      }
+    }
+  },
+  "exceptions": {
+    "invalid_entry": {
+      "message": "L'entrée de configuration {entry_id} n'est pas une entrée setlist.fm chargée."
+    },
+    "no_loaded_entries": {
+      "message": "Aucune entrée setlist.fm n'est chargée. Vérifiez la configuration de l'intégration."
+    },
+    "entry_unloaded": {
+      "message": "Cette entrée setlist.fm a été déchargée avant la fin de l'actualisation."
+    },
+    "refresh_failed": {
+      "message": "Impossible d'actualiser {entries} : {error}"
     }
   },
   "services": {
     "refresh": {
       "name": "Actualiser",
-      "description": "Force une actualisation des données pour une ou toutes les entrées setlist.fm.",
+      "description": "Force une actualisation des données pour une ou toutes les entrées setlist.fm chargées.",
       "fields": {
         "entry_id": {
           "name": "ID d'entrée",
-          "description": "L'ID d'entrée de configuration à actualiser. Si omis, toutes les entrées sont actualisées."
+          "description": "L'ID d'entrée de configuration à actualiser. S'il est omis, toutes les entrées chargées sont actualisées. Une cible explicitement indiquée doit être une entrée setlist.fm chargée."
         }
       }
     }

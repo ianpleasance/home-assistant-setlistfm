@@ -3,22 +3,35 @@
     "step": {
       "user": {
         "title": "Anslut till Setlist.fm",
-        "description": "Ange ditt Setlist.fm användar-ID och API-nyckel. Du hittar ditt användar-ID i din profil-URL och kan hämta en API-nyckel från https://www.setlist.fm/settings/api",
+        "description": "Ange ditt Setlist.fm-användarnamn och din API-nyckel. Du kan hämta en API-nyckel från https://www.setlist.fm/settings/api",
         "data": {
-          "userid": "Användar-ID",
+          "userid": "Användarnamn",
           "api_key": "API-nyckel",
           "name": "Namn (valfritt)"
+        },
+        "data_description": {
+          "userid": "Ditt användarnamn är delen efter /user/ i din profil-URL och visas också högst upp till höger bredvid \"Add setlist\". Det omvandlas automatiskt till små bokstäver."
+        }
+      },
+      "reauth_confirm": {
+        "title": "Anslut till Setlist.fm igen",
+        "description": "API-nyckeln för {username} accepteras inte längre. Ange en ny nyckel för att återansluta det här befintliga kontot.",
+        "data": {
+          "api_key": "API-nyckel"
         }
       }
     },
     "error": {
+      "invalid_username": "Ange ett användarnamn som inte är tomt eller bara innehåller blanksteg.",
       "cannot_connect": "Det gick inte att ansluta till Setlist.fm. Kontrollera din internetanslutning.",
       "invalid_auth": "Ogiltig API-nyckel. Kontrollera din API-nyckel och försök igen.",
-      "user_not_found": "Användaren hittades inte. Kontrollera ditt användar-ID.",
+      "rate_limited": "Setlist.fm begränsar antalet förfrågningar. Vänta innan du försöker igen.",
+      "invalid_response": "Setlist.fm returnerade ett oväntat eller ofullständigt svar. Försök igen senare.",
       "unknown": "Oväntat fel uppstod. Försök igen."
     },
     "abort": {
-      "already_configured": "Den här användaren är redan konfigurerad."
+      "already_configured": "Den här användaren är redan konfigurerad.",
+      "reauth_successful": "Den nya autentiseringen lyckades."
     }
   },
   "options": {
@@ -31,18 +44,62 @@
           "number_of_concerts": "Antal konserter att visa",
           "date_format": "Datumformat",
           "show_concerts": "Visa konserter"
+        },
+        "data_description": {
+          "refresh_period": "Hur ofta nya konserter ska kontrolleras (1-24 timmar)",
+          "number_of_concerts": "Maximalt antal enskilda framträdanden och, separat, grupperade konsertbesök som visas (1-50); ändrar inte det totala antalet besök",
+          "date_format": "Format för att visa datum",
+          "show_concerts": "Filtrera visade framträdanden och grupperade besök efter datum; ändrar inte det totala antalet besök"
         }
       }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "concerts": {
+        "name": "Visade konserter"
+      },
+      "total_concerts": {
+        "name": "Totalt antal konserter"
+      },
+      "unique_concert_visits": {
+        "name": "Unika konsertbesök"
+      },
+      "next_concert": {
+        "name": "Nästa konsert"
+      },
+      "last_update": {
+        "name": "Senaste lyckade uppdatering"
+      }
+    },
+    "button": {
+      "refresh": {
+        "name": "Uppdatera"
+      }
+    }
+  },
+  "exceptions": {
+    "invalid_entry": {
+      "message": "Konfigurationsposten {entry_id} är inte en inläst setlist.fm-post."
+    },
+    "no_loaded_entries": {
+      "message": "Inga setlist.fm-poster är inlästa. Kontrollera integrationens inställningar."
+    },
+    "entry_unloaded": {
+      "message": "Den här setlist.fm-posten togs bort från minnet innan uppdateringen slutfördes."
+    },
+    "refresh_failed": {
+      "message": "Kunde inte uppdatera {entries}: {error}"
     }
   },
   "services": {
     "refresh": {
       "name": "Uppdatera",
-      "description": "Tvinga en datauppdatering för en eller alla setlist.fm-konfigurationsposter.",
+      "description": "Tvinga en datauppdatering för en eller alla inlästa setlist.fm-konfigurationsposter.",
       "fields": {
         "entry_id": {
           "name": "Post-ID",
-          "description": "Konfigurationspost-ID att uppdatera. Om utelämnat uppdateras alla poster."
+          "description": "Konfigurationspost-ID att uppdatera. Om det utelämnas uppdateras alla inlästa poster. En uttryckligen angiven post måste vara en inläst setlist.fm-post."
         }
       }
     }

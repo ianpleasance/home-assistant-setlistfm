@@ -3,22 +3,35 @@
     "step": {
       "user": {
         "title": "Verbinding maken met Setlist.fm",
-        "description": "Voer uw Setlist.fm gebruikers-ID en API-sleutel in. Uw gebruikers-ID staat in uw profiel-URL; een API-sleutel kunt u ophalen via https://www.setlist.fm/settings/api",
+        "description": "Voer uw Setlist.fm-gebruikersnaam en API-sleutel in. Een API-sleutel kunt u aanvragen via https://www.setlist.fm/settings/api",
         "data": {
-          "userid": "Gebruikers-ID",
+          "userid": "Gebruikersnaam",
           "api_key": "API-sleutel",
           "name": "Naam (optioneel)"
+        },
+        "data_description": {
+          "userid": "Uw gebruikersnaam is het gedeelte na /user/ in uw profiel-URL en staat ook rechtsboven naast \"Add setlist\". De naam wordt automatisch omgezet naar kleine letters."
+        }
+      },
+      "reauth_confirm": {
+        "title": "Opnieuw verbinden met Setlist.fm",
+        "description": "De API-sleutel voor {username} wordt niet meer geaccepteerd. Voer een vervangende sleutel in om dit bestaande account opnieuw te verbinden.",
+        "data": {
+          "api_key": "API-sleutel"
         }
       }
     },
     "error": {
+      "invalid_username": "Voer een gebruikersnaam in die niet leeg is of alleen uit witruimte bestaat.",
       "cannot_connect": "Verbinding met Setlist.fm mislukt. Controleer uw internetverbinding.",
       "invalid_auth": "Ongeldige API-sleutel. Controleer uw API-sleutel en probeer opnieuw.",
-      "user_not_found": "Gebruiker niet gevonden. Controleer uw gebruikers-ID.",
+      "rate_limited": "Setlist.fm beperkt het aantal verzoeken. Wacht voordat u het opnieuw probeert.",
+      "invalid_response": "Setlist.fm heeft een onverwacht of onvolledig antwoord teruggestuurd. Probeer het later opnieuw.",
       "unknown": "Onverwachte fout opgetreden. Probeer het opnieuw."
     },
     "abort": {
-      "already_configured": "Deze gebruiker is al geconfigureerd."
+      "already_configured": "Deze gebruiker is al geconfigureerd.",
+      "reauth_successful": "Opnieuw authenticeren is geslaagd."
     }
   },
   "options": {
@@ -31,18 +44,62 @@
           "number_of_concerts": "Aantal weer te geven concerten",
           "date_format": "Datumnotatie",
           "show_concerts": "Concerten weergeven"
+        },
+        "data_description": {
+          "refresh_period": "Hoe vaak er op nieuwe concerten wordt gecontroleerd (1-24 uur)",
+          "number_of_concerts": "Maximaal aantal afzonderlijke optredens en, apart daarvan, gegroepeerde concertbezoeken om weer te geven (1-50); verandert het totale aantal bezoeken niet",
+          "date_format": "Notatie voor het weergeven van datums",
+          "show_concerts": "Filter getoonde optredens en gegroepeerde bezoeken op datum; verandert het totale aantal bezoeken niet"
         }
       }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "concerts": {
+        "name": "Getoonde concerten"
+      },
+      "total_concerts": {
+        "name": "Totaal aantal concerten"
+      },
+      "unique_concert_visits": {
+        "name": "Unieke concertbezoeken"
+      },
+      "next_concert": {
+        "name": "Volgend concert"
+      },
+      "last_update": {
+        "name": "Laatste geslaagde update"
+      }
+    },
+    "button": {
+      "refresh": {
+        "name": "Vernieuwen"
+      }
+    }
+  },
+  "exceptions": {
+    "invalid_entry": {
+      "message": "Configuratie-item {entry_id} is geen geladen setlist.fm-item."
+    },
+    "no_loaded_entries": {
+      "message": "Er zijn geen setlist.fm-items geladen. Controleer de configuratie van de integratie."
+    },
+    "entry_unloaded": {
+      "message": "Dit setlist.fm-item is uit het geheugen verwijderd voordat het vernieuwen was voltooid."
+    },
+    "refresh_failed": {
+      "message": "Kon {entries} niet vernieuwen: {error}"
     }
   },
   "services": {
     "refresh": {
       "name": "Vernieuwen",
-      "description": "Forceer een gegevensverversing voor één of alle setlist.fm-configuratie-items.",
+      "description": "Forceer een gegevensverversing voor één of alle geladen setlist.fm-configuratie-items.",
       "fields": {
         "entry_id": {
           "name": "Item-ID",
-          "description": "Het configuratie-item-ID om te vernieuwen. Als weggelaten, worden alle items vernieuwd."
+          "description": "Het configuratie-item-ID om te vernieuwen. Als dit wordt weggelaten, worden alle geladen items vernieuwd. Een expliciet opgegeven doel moet een geladen setlist.fm-item zijn."
         }
       }
     }

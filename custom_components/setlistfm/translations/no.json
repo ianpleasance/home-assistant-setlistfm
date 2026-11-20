@@ -3,22 +3,35 @@
     "step": {
       "user": {
         "title": "Koble til Setlist.fm",
-        "description": "Skriv inn Setlist.fm bruker-ID og API-nøkkel. Du finner bruker-ID-en din i profil-URL-en, og kan hente en API-nøkkel fra https://www.setlist.fm/settings/api",
+        "description": "Skriv inn Setlist.fm-brukernavnet og API-nøkkelen din. Du kan hente en API-nøkkel fra https://www.setlist.fm/settings/api",
         "data": {
-          "userid": "Bruker-ID",
+          "userid": "Brukernavn",
           "api_key": "API-nøkkel",
           "name": "Navn (valgfritt)"
+        },
+        "data_description": {
+          "userid": "Brukernavnet ditt er delen etter /user/ i profil-URL-en og vises også øverst til høyre ved siden av \"Add setlist\". Det konverteres automatisk til små bokstaver."
+        }
+      },
+      "reauth_confirm": {
+        "title": "Koble til Setlist.fm på nytt",
+        "description": "API-nøkkelen for {username} godtas ikke lenger. Skriv inn en ny nøkkel for å koble til denne eksisterende kontoen på nytt.",
+        "data": {
+          "api_key": "API-nøkkel"
         }
       }
     },
     "error": {
+      "invalid_username": "Skriv inn et brukernavn som ikke er tomt eller bare består av mellomrom.",
       "cannot_connect": "Tilkobling til Setlist.fm mislyktes. Sjekk internettforbindelsen din.",
       "invalid_auth": "Ugyldig API-nøkkel. Sjekk API-nøkkelen din og prøv igjen.",
-      "user_not_found": "Bruker ikke funnet. Sjekk bruker-ID-en din.",
+      "rate_limited": "Setlist.fm begrenser antall forespørsler. Vent før du prøver igjen.",
+      "invalid_response": "Setlist.fm returnerte et uventet eller ufullstendig svar. Prøv igjen senere.",
       "unknown": "Uventet feil oppstod. Prøv igjen."
     },
     "abort": {
-      "already_configured": "Denne brukeren er allerede konfigurert."
+      "already_configured": "Denne brukeren er allerede konfigurert.",
+      "reauth_successful": "Ny autentisering var vellykket."
     }
   },
   "options": {
@@ -31,18 +44,62 @@
           "number_of_concerts": "Antall konserter som skal vises",
           "date_format": "Datoformat",
           "show_concerts": "Vis konserter"
+        },
+        "data_description": {
+          "refresh_period": "Hvor ofte nye konserter skal sjekkes (1-24 timer)",
+          "number_of_concerts": "Maksimalt antall enkeltopptredener og, separat, grupperte konsertbesøk som vises (1-50); endrer ikke det totale antallet besøk",
+          "date_format": "Format for visning av datoer",
+          "show_concerts": "Filtrer viste opptredener og grupperte besøk etter dato; endrer ikke det totale antallet besøk"
         }
       }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "concerts": {
+        "name": "Viste konserter"
+      },
+      "total_concerts": {
+        "name": "Totalt antall konserter"
+      },
+      "unique_concert_visits": {
+        "name": "Unike konsertbesøk"
+      },
+      "next_concert": {
+        "name": "Neste konsert"
+      },
+      "last_update": {
+        "name": "Siste vellykkede oppdatering"
+      }
+    },
+    "button": {
+      "refresh": {
+        "name": "Oppdater"
+      }
+    }
+  },
+  "exceptions": {
+    "invalid_entry": {
+      "message": "Konfigurasjonsoppføringen {entry_id} er ikke en innlastet setlist.fm-oppføring."
+    },
+    "no_loaded_entries": {
+      "message": "Ingen setlist.fm-oppføringer er lastet inn. Sjekk integrasjonsoppsettet."
+    },
+    "entry_unloaded": {
+      "message": "Denne setlist.fm-oppføringen ble fjernet fra minnet før oppdateringen var ferdig."
+    },
+    "refresh_failed": {
+      "message": "Kunne ikke oppdatere {entries}: {error}"
     }
   },
   "services": {
     "refresh": {
       "name": "Oppdater",
-      "description": "Tving en dataoppdatering for én eller alle setlist.fm-konfigurasjonsoppføringer.",
+      "description": "Tving en dataoppdatering for én eller alle innlastede setlist.fm-konfigurasjonsoppføringer.",
       "fields": {
         "entry_id": {
           "name": "Oppførings-ID",
-          "description": "Konfigurasjonsoppførings-ID-en som skal oppdateres. Hvis utelatt, oppdateres alle oppføringer."
+          "description": "Konfigurasjonsoppførings-ID-en som skal oppdateres. Hvis utelatt, oppdateres alle innlastede oppføringer. En eksplisitt angitt oppføring må være en innlastet setlist.fm-oppføring."
         }
       }
     }

@@ -1,0 +1,13 @@
+{
+  "name": "setlistfm-card-tests",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "playwright test",
+    "test:ha": "node tests/frontend/live-smoke.js",
+    "test:ui": "playwright test --ui"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.63.0"
+  }
+}

@@ -2,6 +2,5 @@
   "name": "Setlist.fm",
   "render_readme": true,
   "domains": ["sensor"],
-  "homeassistant": "2024.1.0"
+  "homeassistant": "2025.1.0"
 }
-

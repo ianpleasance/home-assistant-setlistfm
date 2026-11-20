@@ -3,22 +3,35 @@
     "step": {
       "user": {
         "title": "Setlist.fmに接続",
-        "description": "Setlist.fmのユーザーIDとAPIキーを入力してください。ユーザーIDはプロフィールURLで確認でき、APIキーはhttps://www.setlist.fm/settings/apiから取得できます。",
+        "description": "Setlist.fmのユーザー名とAPIキーを入力してください。APIキーはhttps://www.setlist.fm/settings/apiから取得できます。",
         "data": {
-          "userid": "ユーザーID",
+          "userid": "ユーザー名",
           "api_key": "APIキー",
           "name": "名前（任意）"
+        },
+        "data_description": {
+          "userid": "ユーザー名はプロフィールURLの /user/ の後の部分で、右上の「Add setlist」の横にも表示されます。自動的に小文字に変換されます。"
+        }
+      },
+      "reauth_confirm": {
+        "title": "Setlist.fmに再接続",
+        "description": "{username}のAPIキーは受け付けられなくなりました。この既存のアカウントを再接続するには、新しいキーを入力してください。",
+        "data": {
+          "api_key": "APIキー"
         }
       }
     },
     "error": {
+      "invalid_username": "空欄や空白のみではないユーザー名を入力してください。",
       "cannot_connect": "Setlist.fmへの接続に失敗しました。インターネット接続を確認してください。",
       "invalid_auth": "APIキーが無効です。APIキーを確認して再試行してください。",
-      "user_not_found": "ユーザーが見つかりません。ユーザーIDを確認してください。",
+      "rate_limited": "Setlist.fmがリクエストを制限しています。しばらく待ってから再試行してください。",
+      "invalid_response": "Setlist.fmから予期しない、または不完全な応答が返されました。後でもう一度お試しください。",
       "unknown": "予期しないエラーが発生しました。再試行してください。"
     },
     "abort": {
-      "already_configured": "このユーザーはすでに設定されています。"
+      "already_configured": "このユーザーはすでに設定されています。",
+      "reauth_successful": "再認証に成功しました。"
     }
   },
   "options": {
@@ -31,18 +44,62 @@
           "number_of_concerts": "表示するコンサート数",
           "date_format": "日付形式",
           "show_concerts": "コンサートを表示"
+        },
+        "data_description": {
+          "refresh_period": "新しいコンサートを確認する間隔（1-24時間）",
+          "number_of_concerts": "個別の演奏と、グループ化したコンサート訪問にそれぞれ適用する表示件数の上限（1-50）。訪問総数は変わりません",
+          "date_format": "日付の表示形式",
+          "show_concerts": "表示する演奏とグループ化した訪問を日付で絞り込みます。訪問総数は変わりません"
         }
       }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "concerts": {
+        "name": "表示中のコンサート"
+      },
+      "total_concerts": {
+        "name": "コンサート総数"
+      },
+      "unique_concert_visits": {
+        "name": "重複のないコンサート訪問数"
+      },
+      "next_concert": {
+        "name": "次のコンサート"
+      },
+      "last_update": {
+        "name": "最後に成功した更新"
+      }
+    },
+    "button": {
+      "refresh": {
+        "name": "更新"
+      }
+    }
+  },
+  "exceptions": {
+    "invalid_entry": {
+      "message": "設定エントリ{entry_id}は、読み込み済みのsetlist.fmエントリではありません。"
+    },
+    "no_loaded_entries": {
+      "message": "読み込み済みのsetlist.fmエントリがありません。インテグレーションの設定を確認してください。"
+    },
+    "entry_unloaded": {
+      "message": "このsetlist.fmエントリは、更新が完了する前にアンロードされました。"
+    },
+    "refresh_failed": {
+      "message": "{entries}を更新できませんでした: {error}"
     }
   },
   "services": {
     "refresh": {
       "name": "更新",
-      "description": "1つまたはすべてのsetlist.fm設定エントリのデータを強制更新します。",
+      "description": "読み込み済みのsetlist.fm設定エントリのうち、1つまたはすべてのデータを強制更新します。",
       "fields": {
         "entry_id": {
           "name": "エントリID",
-          "description": "更新する設定エントリID。省略した場合、すべてのエントリが更新されます。"
+          "description": "更新する設定エントリID。省略した場合、読み込み済みのすべてのエントリが更新されます。明示的に指定する対象は、読み込み済みのsetlist.fmエントリである必要があります。"
         }
       }
     }

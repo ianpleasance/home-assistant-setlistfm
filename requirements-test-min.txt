@@ -1,0 +1,6 @@
+# Historical Home Assistant 2025.1.4 / Python 3.13 test environment only.
+pytest-homeassistant-custom-component==0.13.205
+# aiodns 3.2 allows pycares 5, whose persistent shutdown thread is incompatible
+# with this historical HA fixture's cleanup checks. Use the contemporary 4.x API.
+pycares==4.5.0
+home-assistant-frontend==20250109.2

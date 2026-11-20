@@ -3,6 +3,53 @@
 All notable changes to the setlist.fm Home Assistant integration are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [Unreleased]
+
+### Fixed
+- Wait for Home Assistant's active frontend registry before registering cards,
+  retain pending editor account changes across focus, and surface upstream
+  incomplete attendance even when returned concert records are valid.
+- Keep successful-refresh timestamps stable across attribute reads and failed
+  refreshes; validate refresh action targets and preserve existing entity IDs.
+- Use the supported attended endpoint for setup and polling instead of deprecated
+  profile validation; preserve empty accounts without claiming username existence.
+- Fetch and validate all advertised attendance pages before filtering. Failed
+  later pages retain the previous snapshot instead of publishing partial history.
+- Count songs in both documented `set` and recorded `sets.set` representations,
+  preserve attribution URLs, and isolate malformed concerts and optional fields.
+- Share finite timeouts, bounded retries, request pacing, and `Retry-After`
+  cooldowns between setup and polling without hiding cancellation or API errors.
+- Preserve API-key cooldowns across fresh validation clients and failed-setup
+  coordinator retries using bounded Home Assistant-owned request state.
+- Recover loaded accounts automatically after a rate-limit cooldown on both
+  supported Home Assistant versions, then restore normal polling. Retain shared
+  deadlines and refresh-action errors, and cancel pending recovery on unload,
+  reload, shutdown or disabled polling.
+
+### Added
+- Native Unique concert visits sensor using full-snapshot venue-day grouping,
+  with unknown totals for incomplete or unidentified attendance and no extra API calls.
+- Additive `concert_visits` attributes and opt-in **Group by concert visit**
+  across all four bundled card presets; alphabetical lineups retain individual
+  setlist links and song counts, with explicit identity and resource-limit warnings.
+- Explicit upstream total, fetched/skipped counts and completeness attributes.
+- Bundled Complete, Compact, Deluxe and Mobile cards with automatic loading,
+  visual account editors, previews and responsive Home Assistant theme support.
+- Native Total concerts, Next concert, Last successful update and Refresh
+  entities; reauthentication for replacing rejected API keys in place.
+- Local mock HTTP API, real-clock request-pacing coverage, and dual-version
+  Python/browser CI including mock-API-to-saved-card smoke tests.
+- An upstream HACS repository button with explicit installation confirmation.
+
+### Changed
+- The existing 1-50 Number of concerts option independently limits raw
+  performances and grouped visits; existing sensor meanings, IDs and default
+  ungrouped card behavior are preserved.
+- Minimum supported Home Assistant version is 2025.1.0; the test environments
+  exercise HA 2025.1.4 and 2026.9.4 with their matching frontend packages.
+- New entry titles use the optional friendly name or normalized username rather
+  than a deprecated profile display name. Existing entry and registry IDs are unchanged.
+
 ## [2.0.20] - 2026-03-05
 
 ### Fixed
